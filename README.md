@@ -71,6 +71,7 @@ npm run build
 https://dev.classmethod.jp/articles/phaser-js-typescript-vite/  
 https://rollupjs.org/configuration-options/#output-manualchunks
 
+test
 
 
 
