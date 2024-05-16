@@ -6,7 +6,7 @@
 
 ### セットアップ
 ```bash
- git clone [URL]
+ git clone git@github.com:jyogi-web/koro-front.git
 ```
 
 node.jsがインストールされていることを確認してください。
