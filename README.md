@@ -18,10 +18,10 @@ v18.13.0
 上記のバージョンが表示されない場合は、node.jsをインストールしてください。  
 バージョンの切り替えができるツールを使用して、バージョンを合わせてください。  
 
-https://github.com/coreybutler/nvm-windows/releases
+https://github.com/coreybutler/nvm-windows/releases  
 上記にアクセスし、nvm-setup.exeをダウンロードしてインストールしてください。  
 インストール方法は以下の記事を参考にして下さい。  
-https://qiita.com/ryome/items/f2a0bc2de007da30bbfd
+https://qiita.com/ryome/items/f2a0bc2de007da30bbfd  
 
 
 ```bash
