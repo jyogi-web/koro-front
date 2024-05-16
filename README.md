@@ -5,7 +5,8 @@
 - vite
 
 ### セットアップ
-```bash
+``` git bash
+cd workspace/koro-front
  git clone git@github.com:jyogi-web/koro-front.git
 ```
 
@@ -15,8 +16,9 @@ node.jsがインストールされていることを確認してください。
 ❯ node -v
 v18.13.0
 ```
-上記のバージョンが表示されない場合は、node.jsをインストールしてください。  
-バージョンの切り替えができるツールを使用して、バージョンを合わせてください。  
+インストールしている場合は、下記を参考に一旦アンインストールしてください。
+https://www.curict.com/item/c6/c6a2674.html  
+上記のバージョンが表示されない場合は、バージョンの切り替えができるツールを使用して、node.jsをインストールし、バージョンを合わせてください。  
 
 https://github.com/coreybutler/nvm-windows/releases  
 上記にアクセスし、nvm-setup.exeをダウンロードしてインストールしてください。  
@@ -33,7 +35,11 @@ node.jsをインストールします。
 
 ```bash 
 nvm install v18.13.0
+Extracting...
+Complete
 
+
+Installation complete. If you want to use this version, type
 nvm use v18.13.0
 ```
 node.jsのバージョンがあることを確認してください。
@@ -44,6 +50,7 @@ v18.13.0
 
 ### パッケージのインストール
 ```bash
+cd workspace/koro-front
 npm install
 ```
 
