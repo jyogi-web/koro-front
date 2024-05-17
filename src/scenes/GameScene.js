@@ -2,11 +2,12 @@ import Phaser from 'phaser';
 
 let player;
 let cursors;
-let obstacles;
-let collectibles;
-let goal;
 let walls;
-let movingObstacles;
+let goal;
+let mazeWidth = 10;
+let mazeHeight = 10;
+let cellSize = 80;
+let currentMazeY = 0;
 
 export default class GameScene extends Phaser.Scene {
     constructor() {
@@ -15,47 +16,30 @@ export default class GameScene extends Phaser.Scene {
 
     preload() {
         this.load.image('player', 'path/to/player.png');
-        this.load.image('obstacle', 'path/to/obstacle.png');
-        this.load.image('collectible', 'path/to/collectible.png');
         this.load.image('goal', 'path/to/goal.png');
         this.load.image('wall', 'path/to/wall.png');
     }
 
     create() {
-        player = this.physics.add.sprite(100, 100, 'player');
+        this.cameras.main.setBounds(0, 0, mazeWidth * cellSize, mazeHeight * cellSize);
+        this.physics.world.setBounds(0, 0, mazeWidth * cellSize, mazeHeight * cellSize);
+
+        player = this.physics.add.sprite(40, 40, 'player');
         player.setCollideWorldBounds(true);
 
-        obstacles = this.physics.add.staticGroup();
-        obstacles.create(400, 300, 'obstacle');
-
-        collectibles = this.physics.add.group();
-        collectibles.create(200, 200, 'collectible');
-        collectibles.create(500, 150, 'collectible');
-        collectibles.create(700, 500, 'collectible');
+        walls = this.physics.add.staticGroup();
+        this.createMaze(mazeWidth, mazeHeight, cellSize, cellSize, 0, 0);
 
         goal = this.physics.add.staticGroup();
-        goal.create(700, 500, 'goal');
+        goal.create(mazeWidth * cellSize - 40, mazeHeight * cellSize - 40, 'goal');
 
-        //壁の追加
-        walls = this.physics.add.staticGroup();
-        walls.create(400, 100, 'wall');
-        walls.create(400, 200, 'wall');
-        walls.create(400, 400, 'wall');
-
-        // 動く障害物の作成と配置
-        movingObstacles = this.physics.add.group();
-        let movingObstacle1 = movingObstacles.create(300, 150, 'obstacle');
-        movingObstacle1.setVelocityX(200);
-        movingObstacle1.setCollideWorldBounds(true);
-        movingObstacle1.setBounce(1);
-
-        // 衝突判定の追加
         this.physics.add.collider(player, walls);
-        this.physics.add.collider(player, obstacles, hitObstacle, null, this);
-        this.physics.add.overlap(player, collectibles, collectItem, null, this);
         this.physics.add.overlap(player, goal, reachGoal, null, this);
 
         cursors = this.input.keyboard.createCursorKeys();
+
+        this.cameras.main.startFollow(player);
+        this.cameras.main.setZoom(0.5);
     }
 
     update() {
@@ -72,24 +56,95 @@ export default class GameScene extends Phaser.Scene {
         } else if (cursors.down.isDown) {
             player.setVelocityY(200);
         }
+
+
+        if (player.y > (currentMazeY + 1) * mazeHeight * cellSize - 40 && !goal.getChildren().length) {
+            currentMazeY++;
+            this.createMaze(mazeWidth, mazeHeight, cellSize, cellSize, 0, currentMazeY * mazeHeight * cellSize);
+            this.physics.world.setBounds(0, 0, mazeWidth * cellSize, (currentMazeY + 1) * mazeHeight * cellSize);
+            this.cameras.main.setBounds(0, 0, mazeWidth * cellSize, (currentMazeY + 1) * mazeHeight * cellSize);
+            player.setPosition(player.x, currentMazeY * mazeHeight * cellSize + 40);
+            goal.create(mazeWidth * cellSize - 40, (currentMazeY + 1) * mazeHeight * cellSize - 40, 'goal');
+        }
     }
-}
 
-function hitObstacle(player, obstacle) {
-    this.physics.pause();
-    player.setTint(0xff0000);
+    createMaze(rows, cols, cellWidth, cellHeight, offsetX, offsetY) {
+        const maze = [];
+        for (let y = 0; y < rows; y++) {
+            maze[y] = [];
+            for (let x = 0; x < cols; x++) {
+                maze[y][x] = { visited: false, top: true, right: true, bottom: true, left: true };
+            }
+        }
 
-    const gameOverText = this.add.text(400, 300, 'Game Over', { fontSize: '64px', fill: '#ff0000' });
-    gameOverText.setOrigin(0.5);
+        const stack = [];
+        const currentCell = { x: 0, y: 0 };
+        maze[currentCell.y][currentCell.x].visited = true;
+        stack.push(currentCell);
 
-    const restartButton = this.add.text(400, 400, 'Restart', { fontSize: '32px', fill: '#ffffff' })
-        .setInteractive()
-        .on('pointerdown', () => this.scene.restart());
-    restartButton.setOrigin(0.5);
-}
+        const directions = [
+            { x: 0, y: -1, wall: 'top', opposite: 'bottom' },
+            { x: 1, y: 0, wall: 'right', opposite: 'left' },
+            { x: 0, y: 1, wall: 'bottom', opposite: 'top' },
+            { x: -1, y: 0, wall: 'left', opposite: 'right' },
+        ];
 
-function collectItem(player, collectible) {
-    collectible.disableBody(true, true);
+        while (stack.length > 0) {
+            const current = stack[stack.length - 1];
+            const neighbors = directions
+                .map(direction => ({
+                    x: current.x + direction.x,
+                    y: current.y + direction.y,
+                    direction
+                }))
+                .filter(neighbor =>
+                    neighbor.x >= 0 &&
+                    neighbor.y >= 0 &&
+                    neighbor.x < cols &&
+                    neighbor.y < rows &&
+                    !maze[neighbor.y][neighbor.x].visited
+                );
+
+            if (neighbors.length > 0) {
+                const next = neighbors[Math.floor(Math.random() * neighbors.length)];
+                maze[current.y][current.x][next.direction.wall] = false;
+                maze[next.y][next.x][next.direction.opposite] = false;
+                maze[next.y][next.x].visited = true;
+                stack.push({ x: next.x, y: next.y });
+            } else {
+                stack.pop();
+            }
+        }
+
+        // 壁を作成
+        for (let y = 0; y < rows; y++) {
+            for (let x = 0; x < cols; x++) {
+                const cell = maze[y][x];
+                const cellX = x * cellWidth + offsetX;
+                const cellY = y * cellHeight + offsetY;
+                if (cell.top) {
+                    const wallSprite = this.add.rectangle(cellX + cellWidth / 2, cellY, cellWidth, 10, 0xffffff);
+                    this.physics.add.existing(wallSprite, true);
+                    walls.add(wallSprite);
+                }
+                if (cell.right) {
+                    const wallSprite = this.add.rectangle(cellX + cellWidth, cellY + cellHeight / 2, 10, cellHeight, 0xffffff);
+                    this.physics.add.existing(wallSprite, true);
+                    walls.add(wallSprite);
+                }
+                if (cell.bottom) {
+                    const wallSprite = this.add.rectangle(cellX + cellWidth / 2, cellY + cellHeight, cellWidth, 10, 0xffffff);
+                    this.physics.add.existing(wallSprite, true);
+                    walls.add(wallSprite);
+                }
+                if (cell.left) {
+                    const wallSprite = this.add.rectangle(cellX, cellY + cellHeight / 2, 10, cellHeight, 0xffffff);
+                    this.physics.add.existing(wallSprite, true);
+                    walls.add(wallSprite);
+                }
+            }
+        }
+    }
 }
 
 function reachGoal(player, goal) {
