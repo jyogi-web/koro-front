@@ -6,6 +6,7 @@ let obstacles;
 let collectibles;
 let goal;
 let walls;
+let movingObstacles;
 
 export default class GameScene extends Phaser.Scene {
     constructor() {
@@ -17,7 +18,7 @@ export default class GameScene extends Phaser.Scene {
         this.load.image('obstacle', 'path/to/obstacle.png');
         this.load.image('collectible', 'path/to/collectible.png');
         this.load.image('goal', 'path/to/goal.png');
-        this.load.image('wall', 'path/to/wall.png'); // 壁の画像を読み込む
+        this.load.image('wall', 'path/to/wall.png');
     }
 
     create() {
@@ -29,17 +30,27 @@ export default class GameScene extends Phaser.Scene {
 
         collectibles = this.physics.add.group();
         collectibles.create(200, 200, 'collectible');
+        collectibles.create(500, 150, 'collectible');
+        collectibles.create(700, 500, 'collectible');
 
         goal = this.physics.add.staticGroup();
         goal.create(700, 500, 'goal');
 
-        // 壁の追加
+        //壁の追加
         walls = this.physics.add.staticGroup();
-        walls.create(400, 100, 'wall'); // 壁を適当な位置に配置
+        walls.create(400, 100, 'wall');
         walls.create(400, 200, 'wall');
         walls.create(400, 400, 'wall');
 
-        this.physics.add.collider(player, walls); // プレイヤーと壁の衝突判定
+        // 動く障害物の作成と配置
+        movingObstacles = this.physics.add.group();
+        let movingObstacle1 = movingObstacles.create(300, 150, 'obstacle');
+        movingObstacle1.setVelocityX(200);
+        movingObstacle1.setCollideWorldBounds(true);
+        movingObstacle1.setBounce(1);
+
+        // 衝突判定の追加
+        this.physics.add.collider(player, walls);
         this.physics.add.collider(player, obstacles, hitObstacle, null, this);
         this.physics.add.overlap(player, collectibles, collectItem, null, this);
         this.physics.add.overlap(player, goal, reachGoal, null, this);
@@ -51,15 +62,15 @@ export default class GameScene extends Phaser.Scene {
         player.setVelocity(0);
 
         if (cursors.left.isDown) {
-            player.setVelocityX(-160);
+            player.setVelocityX(-200);
         } else if (cursors.right.isDown) {
-            player.setVelocityX(160);
+            player.setVelocityX(200);
         }
 
         if (cursors.up.isDown) {
-            player.setVelocityY(-160);
+            player.setVelocityY(-200);
         } else if (cursors.down.isDown) {
-            player.setVelocityY(160);
+            player.setVelocityY(200);
         }
     }
 }
