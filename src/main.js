@@ -1,24 +1,19 @@
-import Phaser from "phaser";
-import MyScene from "@/scenes/MyScene";
+import Phaser from 'phaser';
+import StartScene from './scenes/StartScene';
+import GameScene from './scenes/GameScene';
 
 const config = {
-    parent: "app",
     type: Phaser.AUTO,
     width: 800,
     height: 600,
-    scale: {
-        mode: Phaser.Scale.ScaleModes.FIT,
-        autoCenter: Phaser.Scale.CENTER_BOTH,
-    },
+    scene: [StartScene, GameScene],
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { x: 0, y: 200 }
+            gravity: { y: 0 },
+            debug: false
         }
-    },
-    scene: [
-        MyScene,
-    ]
+    }
 };
 
-export default new Phaser.Game(config);
+const game = new Phaser.Game(config);
