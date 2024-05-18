@@ -301,7 +301,17 @@ function reachGoal(player, goal) {
         goalText.setOrigin(0.5);
         const restartButton = this.add.text(400, 400, 'Menu', { fontSize: '32px', fill: '#ffffff' })
             .setInteractive()
-            .on('pointerdown', () => this.scene.start('StartScene'));
+            .on('pointerdown', () => {
+                collectedCoins = 0;
+                controlsInverted = false;
+                resetItems.call(this);
+                this.scene.start('StartScene');
+            });
         restartButton.setOrigin(0.5);
     }
+}
+// アイテムをリセットする関数
+function resetItems() {
+    // 既存のコインを全て削除
+    coins.clear(true, true);
 }
