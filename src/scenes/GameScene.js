@@ -9,6 +9,7 @@ let mazeHeight = 10;
 let cellSize = 80;
 let enemies;
 let coins;
+let coin;
 
 // メインのゲームシーンを定義
 export default class GameScene extends Phaser.Scene {
@@ -43,11 +44,23 @@ export default class GameScene extends Phaser.Scene {
         goal = this.physics.add.staticGroup();
         goal.create(mazeWidth * cellSize - 40, mazeHeight * cellSize - 40, 'goal');
 
-        // コインを作成
-        coins = this.physics.add.group({
-            key: 'coin',
-            setXY: { x: 100, y: 100 }
-        });
+        
+            // コインを格納するためのグループを作成
+            coins = this.physics.add.group();
+        
+            for (let i = 0; i < 10; i++) {
+                // ランダムな位置にコインを作成
+                let x = Phaser.Math.Between(0, 800);
+                let y = Phaser.Math.Between(0, 600);
+        
+                // コインをグループに追加
+                coin = coins.create(x, y, 'coin');
+        
+                // コインとプレイヤーが重なったときの処理を設定
+                this.physics.add.overlap(player, coin, collectItem, null, this);
+            }
+        
+       
         //敵を作成
         enemies = this.physics.add.group();
         this.createEnemies();
@@ -168,8 +181,8 @@ export default class GameScene extends Phaser.Scene {
 
     createEnemies() {
         // 指定された位置に敵を作成
-        enemies.create(400, 300, 'enemy');
-        enemies.create(200, 200, 'enemy');
+        enemies.create(500, 500, 'enemy');
+        enemies.create(500, 240, 'enemy');
     }
 }
 
