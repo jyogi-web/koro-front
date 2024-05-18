@@ -19,9 +19,7 @@ let movingObstacles5;
 let movingObstacles6;
 let movingObstacles7;
 let movingObstacles8;
-let movingObstacles9;
-let movingObstacles10;
-let movingObstacles11;
+
 
 // メインのゲームシーンを定義
 export default class GameScene extends Phaser.Scene {
@@ -120,27 +118,7 @@ export default class GameScene extends Phaser.Scene {
         movingObstacle8.setVelocityX(200);
         movingObstacle8.setCollideWorldBounds(true);
         movingObstacle8.setBounce(1);
-        //9
-        movingObstacles9 = this.physics.add.group();
-        let movingObstacle9 = movingObstacles9.create(700, 120, 'Obstacle');
-        movingObstacle9.setVelocityX(400);
-        movingObstacle9.setVelocityY(300);
-        movingObstacle9.setCollideWorldBounds(true);
-        movingObstacle9.setBounce(1.05);
-        //10
-        movingObstacles10 = this.physics.add.group();
-        let movingObstacle10 = movingObstacles10.create(670, 90, 'Obstacle');
-        movingObstacle10.setVelocityX(400);
-        movingObstacle10.setVelocityY(300);
-        movingObstacle10.setCollideWorldBounds(true);
-        movingObstacle10.setBounce(1.05);
-        //11
-        movingObstacles11 = this.physics.add.group();
-        let movingObstacle11 = movingObstacles11.create(640, 60, 'Obstacle');
-        movingObstacle11.setVelocityX(400);
-        movingObstacle11.setVelocityY(300);
-        movingObstacle11.setCollideWorldBounds(true);
-        movingObstacle11.setBounce(1.05);
+
 
         // 衝突と重なりを設定
         this.physics.add.collider(player, walls);
@@ -154,9 +132,6 @@ export default class GameScene extends Phaser.Scene {
         this.physics.add.collider(player, movingObstacle6, hitEnemy, null, this);
         this.physics.add.collider(player, movingObstacle7, hitEnemy, null, this);
         this.physics.add.collider(player, movingObstacle8, hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacle9, hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacle10, hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacle11, hitEnemy, null, this);
 
         // プレイヤーの移動用のカーソルキーを設定
         cursors = this.input.keyboard.createCursorKeys();
