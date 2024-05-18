@@ -19,6 +19,7 @@ let movingObstacles5;
 let movingObstacles6;
 let movingObstacles7;
 let movingObstacles8;
+let controlsInverted = false;
 
 
 // メインのゲームシーンを定義
@@ -146,16 +147,30 @@ export default class GameScene extends Phaser.Scene {
         player.setVelocity(0);
 
         // プレイヤーの移動を処理
-        if (cursors.left.isDown) {
-            player.setVelocityX(-200);
-        } else if (cursors.right.isDown) {
-            player.setVelocityX(200);
-        }
+        if (controlsInverted) {
+            if (cursors.left.isDown) {
+                player.setVelocityX(200);
+            } else if (cursors.right.isDown) {
+                player.setVelocityX(-200);
+            }
 
-        if (cursors.up.isDown) {
-            player.setVelocityY(-200);
-        } else if (cursors.down.isDown) {
-            player.setVelocityY(200);
+            if (cursors.up.isDown) {
+                player.setVelocityY(200);
+            } else if (cursors.down.isDown) {
+                player.setVelocityY(-200);
+            }
+        } else {
+            if (cursors.left.isDown) {
+                player.setVelocityX(-200);
+            } else if (cursors.right.isDown) {
+                player.setVelocityX(200);
+            }
+
+            if (cursors.up.isDown) {
+                player.setVelocityY(-200);
+            } else if (cursors.down.isDown) {
+                player.setVelocityY(200);
+            }
         }
     }
 
@@ -250,8 +265,11 @@ function hitEnemy(player, enemy) {
     gameOverText.setOrigin(0.5);
     const restartButton = this.add.text(400, 400, 'Restart', { fontSize: '32px', fill: '#ffffff' })
         .setInteractive()
-        // クリックでシーンを再起動
-        .on('pointerdown', () => this.scene.restart());
+        .on('pointerdown', () => {
+            collectedCoins = 0;
+            controlsInverted = false;
+            this.scene.restart();
+        });
     restartButton.setOrigin(0.5);
 }
 
@@ -261,6 +279,10 @@ function collectItem(player, collectible) {
     collectible.disableBody(true, true);
     // 収集したコインの数を増やす
     collectedCoins++;
+    // コインを5個以上集めたら操作を反転させる
+    if (collectedCoins >= 5) {
+        controlsInverted = true;
+    }
     // 全てのコインを収集した場合
     if (collectedCoins === totalCoins) {
         goal.children.iterate(child => {
