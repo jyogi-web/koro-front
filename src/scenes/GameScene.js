@@ -125,14 +125,14 @@ export default class GameScene extends Phaser.Scene {
         this.physics.add.collider(player, walls);
         this.physics.add.overlap(player, coins, collectItem, null, this);
         this.physics.add.overlap(player, goal, reachGoal, null, this);
-        // this.physics.add.collider(player, movingObstacle1, hitEnemy, null, this);
-        // this.physics.add.collider(player, movingObstacle2, hitEnemy, null, this);
-        // this.physics.add.collider(player, movingObstacle3, hitEnemy, null, this);
-        // this.physics.add.collider(player, movingObstacle4, hitEnemy, null, this);
-        // this.physics.add.collider(player, movingObstacle5, hitEnemy, null, this);
-        // this.physics.add.collider(player, movingObstacle6, hitEnemy, null, this);
-        // this.physics.add.collider(player, movingObstacle7, hitEnemy, null, this);
-        // this.physics.add.collider(player, movingObstacle8, hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacle1, hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacle2, hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacle3, hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacle4, hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacle5, hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacle6, hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacle7, hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacle8, hitEnemy, null, this);
 
         // プレイヤーの移動用のカーソルキーを設定
         cursors = this.input.keyboard.createCursorKeys();
