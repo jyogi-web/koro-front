@@ -64,6 +64,7 @@ export default class GameScene extends Phaser.Scene {
         this.physics.add.collider(player, enemies, hitEnemy, null, this);
         this.physics.add.overlap(player, coins, collectItem, null, this);
         this.physics.add.overlap(player, goal, reachGoal, null, this);
+        this.physics.add.collider(player, movingObstacle1, hitEnemy, null, this);
 
         // プレイヤーの移動用のカーソルキーを設定
         cursors = this.input.keyboard.createCursorKeys();
