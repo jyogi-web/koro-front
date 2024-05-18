@@ -9,6 +9,7 @@ let mazeHeight = 10;
 let cellSize = 80;
 let enemies;
 let coins;
+let movingObstacles;
 
 // メインのゲームシーンを定義
 export default class GameScene extends Phaser.Scene {
@@ -51,6 +52,12 @@ export default class GameScene extends Phaser.Scene {
         //敵を作成
         enemies = this.physics.add.group();
         this.createEnemies();
+        
+        movingObstacles = this.physics.add.group();
+        let movingObstacle1 = movingObstacles.create(300, 150, 'obstacle');
+        movingObstacle1.setVelocityX(200);
+        movingObstacle1.setCollideWorldBounds(true);
+        movingObstacle1.setBounce(1);
 
         // 衝突と重なりを設定
         this.physics.add.collider(player, walls);
