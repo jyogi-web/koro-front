@@ -7,7 +7,7 @@ let goal;
 let mazeWidth = 10;
 let mazeHeight = 10;
 let cellSize = 80;
-let currentMazeY = 0;
+let enemies;
 
 export default class GameScene extends Phaser.Scene {
     constructor() {
@@ -18,6 +18,7 @@ export default class GameScene extends Phaser.Scene {
         this.load.image('player', 'path/to/player.png');
         this.load.image('goal', 'path/to/goal.png');
         this.load.image('wall', 'path/to/wall.png');
+        this.load.image('enemy', 'path/to/enemy.png');
     }
 
     create() {
@@ -33,7 +34,11 @@ export default class GameScene extends Phaser.Scene {
         goal = this.physics.add.staticGroup();
         goal.create(mazeWidth * cellSize - 40, mazeHeight * cellSize - 40, 'goal');
 
+        enemies = this.physics.add.group();
+        this.createEnemies();
+
         this.physics.add.collider(player, walls);
+        this.physics.add.collider(player, enemies, hitEnemy, null, this);
         this.physics.add.overlap(player, goal, reachGoal, null, this);
 
         cursors = this.input.keyboard.createCursorKeys();
@@ -57,15 +62,6 @@ export default class GameScene extends Phaser.Scene {
             player.setVelocityY(200);
         }
 
-
-        if (player.y > (currentMazeY + 1) * mazeHeight * cellSize - 40 && !goal.getChildren().length) {
-            currentMazeY++;
-            this.createMaze(mazeWidth, mazeHeight, cellSize, cellSize, 0, currentMazeY * mazeHeight * cellSize);
-            this.physics.world.setBounds(0, 0, mazeWidth * cellSize, (currentMazeY + 1) * mazeHeight * cellSize);
-            this.cameras.main.setBounds(0, 0, mazeWidth * cellSize, (currentMazeY + 1) * mazeHeight * cellSize);
-            player.setPosition(player.x, currentMazeY * mazeHeight * cellSize + 40);
-            goal.create(mazeWidth * cellSize - 40, (currentMazeY + 1) * mazeHeight * cellSize - 40, 'goal');
-        }
     }
 
     createMaze(rows, cols, cellWidth, cellHeight, offsetX, offsetY) {
@@ -145,15 +141,30 @@ export default class GameScene extends Phaser.Scene {
             }
         }
     }
+
+    createEnemies() {
+
+        enemies.create(400, 300, 'enemy');
+        enemies.create(200, 200, 'enemy');
+    }
+}
+
+function hitEnemy(player, enemy) {
+    this.physics.pause();
+    player.setTint(0xff0000);
+    const gameOverText = this.add.text(400, 300, 'Game Over', { fontSize: '64px', fill: '#ff0000' });
+    gameOverText.setOrigin(0.5);
+    const restartButton = this.add.text(400, 400, 'Restart', { fontSize: '32px', fill: '#ffffff' })
+        .setInteractive()
+        .on('pointerdown', () => this.scene.restart());
+    restartButton.setOrigin(0.5);
 }
 
 function reachGoal(player, goal) {
     this.physics.pause();
     player.setTint(0x00ff00);
-
     const goalText = this.add.text(400, 300, 'You Win!', { fontSize: '64px', fill: '#00ff00' });
     goalText.setOrigin(0.5);
-
     const restartButton = this.add.text(400, 400, 'Menu', { fontSize: '32px', fill: '#ffffff' })
         .setInteractive()
         .on('pointerdown', () => this.scene.start('StartScene'));
