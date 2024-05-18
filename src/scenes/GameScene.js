@@ -9,6 +9,8 @@ let mazeHeight = 10;
 let cellSize = 80;
 let coins;
 let coin;
+let collectedCoins = 0;
+let totalCoins = 10;
 let movingObstacles;
 let movingObstacles2;
 let movingObstacles3;
@@ -17,7 +19,6 @@ let movingObstacles5;
 let movingObstacles6;
 let movingObstacles7;
 let movingObstacles8;
-
 
 // メインのゲームシーンを定義
 export default class GameScene extends Phaser.Scene {
@@ -51,6 +52,21 @@ export default class GameScene extends Phaser.Scene {
         // ゴールを作成
         goal = this.physics.add.staticGroup();
         goal.create(mazeWidth * cellSize - 40, mazeHeight * cellSize - 40, 'goal');
+
+        // コインを格納するためのグループを作成
+        coins = this.physics.add.group();
+
+        for (let i = 0; i < 10; i++) {
+            // ランダムな位置にコインを作成
+            let x = Phaser.Math.Between(0, 800);
+            let y = Phaser.Math.Between(0, 600);
+
+            // コインをグループに追加
+            coin = coins.create(x, y, 'coin');
+
+            // コインとプレイヤーが重なったときの処理を設定
+            this.physics.add.overlap(player, coin, collectItem, null, this);
+        }
 
         //動く敵を作成
         //1
@@ -102,20 +118,6 @@ export default class GameScene extends Phaser.Scene {
         movingObstacle8.setCollideWorldBounds(true);
         movingObstacle8.setBounce(1);
       
-            // コインを格納するためのグループを作成
-            coins = this.physics.add.group();
-        
-            for (let i = 0; i < 10; i++) {
-                // ランダムな位置にコインを作成
-                let x = Phaser.Math.Between(0, 800);
-                let y = Phaser.Math.Between(0, 600);
-        
-                // コインをグループに追加
-                coin = coins.create(x, y, 'coin');
-        
-                // コインとプレイヤーが重なったときの処理を設定
-                this.physics.add.overlap(player, coin, collectItem, null, this);
-            }
         
       
 
@@ -252,16 +254,27 @@ function hitEnemy(player, enemy) {
 function collectItem(player, collectible) {
     // コインを無効化して非表示にする
     collectible.disableBody(true, true);
+    // 収集したコインの数を増やす
+    collectedCoins++;
+    // 全てのコインを収集した場合
+    if (collectedCoins === totalCoins) {
+        goal.children.iterate(child => {
+            child.setTint(0x00ff00);
+        });
+    }
 }
 
 // ゴールに到達したときの処理を行う関数
 function reachGoal(player, goal) {
-    this.physics.pause();
-    player.setTint(0x00ff00);
-    const goalText = this.add.text(400, 300, 'You Win!', { fontSize: '64px', fill: '#00ff00' });
-    goalText.setOrigin(0.5);
-    const restartButton = this.add.text(400, 400, 'Menu', { fontSize: '32px', fill: '#ffffff' })
-        .setInteractive()
-        .on('pointerdown', () => this.scene.start('StartScene'));
-    restartButton.setOrigin(0.5);
+    // 全てのコインを収集しているか確認
+    if (collectedCoins === totalCoins) {
+        this.physics.pause();
+        player.setTint(0x00ff00);
+        const goalText = this.add.text(400, 300, 'You Win!', { fontSize: '64px', fill: '#00ff00' });
+        goalText.setOrigin(0.5);
+        const restartButton = this.add.text(400, 400, 'Menu', { fontSize: '32px', fill: '#ffffff' })
+            .setInteractive()
+            .on('pointerdown', () => this.scene.start('StartScene'));
+        restartButton.setOrigin(0.5);
+    }
 }
