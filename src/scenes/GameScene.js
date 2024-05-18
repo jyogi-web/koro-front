@@ -125,14 +125,14 @@ export default class GameScene extends Phaser.Scene {
         this.physics.add.collider(player, walls);
         this.physics.add.overlap(player, coins, collectItem, null, this);
         this.physics.add.overlap(player, goal, reachGoal, null, this);
-        this.physics.add.collider(player, movingObstacle1, hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacle2, hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacle3, hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacle4, hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacle5, hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacle6, hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacle7, hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacle8, hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacle1, hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacle2, hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacle3, hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacle4, hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacle5, hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacle6, hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacle7, hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacle8, hitEnemy, null, this);
 
         // プレイヤーの移動用のカーソルキーを設定
         cursors = this.input.keyboard.createCursorKeys();
@@ -301,7 +301,17 @@ function reachGoal(player, goal) {
         goalText.setOrigin(0.5);
         const restartButton = this.add.text(400, 400, 'Menu', { fontSize: '32px', fill: '#ffffff' })
             .setInteractive()
-            .on('pointerdown', () => this.scene.start('StartScene'));
+            .on('pointerdown', () => {
+                collectedCoins = 0;
+                controlsInverted = false;
+                resetItems.call(this);
+                this.scene.start('StartScene');
+            });
         restartButton.setOrigin(0.5);
     }
+}
+// アイテムをリセットする関数
+function resetItems() {
+    // 既存のコインを全て削除
+    coins.clear(true, true);
 }
