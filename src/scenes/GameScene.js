@@ -56,7 +56,7 @@ export default class GameScene extends Phaser.Scene {
         // コインを格納するためのグループを作成
         coins = this.physics.add.group();
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < totalCoins; i++) {
             // ランダムな位置にコインを作成
             let x = Phaser.Math.Between(0, 800);
             let y = Phaser.Math.Between(0, 600);
@@ -117,9 +117,9 @@ export default class GameScene extends Phaser.Scene {
         movingObstacle8.setVelocityX(200);
         movingObstacle8.setCollideWorldBounds(true);
         movingObstacle8.setBounce(1);
-      
-        
-      
+
+
+
 
         // 衝突と重なりを設定
         this.physics.add.collider(player, walls);
