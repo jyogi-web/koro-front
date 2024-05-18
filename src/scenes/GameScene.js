@@ -8,6 +8,7 @@ let mazeWidth = 10;
 let mazeHeight = 10;
 let cellSize = 80;
 let enemies;
+let coins;
 
 export default class GameScene extends Phaser.Scene {
     constructor() {
@@ -19,6 +20,7 @@ export default class GameScene extends Phaser.Scene {
         this.load.image('goal', 'path/to/goal.png');
         this.load.image('wall', 'path/to/wall.png');
         this.load.image('enemy', 'path/to/enemy.png');
+        this.load.image('coin', 'path/to/coin.png');
     }
 
     create() {
@@ -34,11 +36,16 @@ export default class GameScene extends Phaser.Scene {
         goal = this.physics.add.staticGroup();
         goal.create(mazeWidth * cellSize - 40, mazeHeight * cellSize - 40, 'goal');
 
+        coins = this.physics.add.group({
+            key: 'coin',
+            setXY: { x: 100, y: 100}
+        })
         enemies = this.physics.add.group();
         this.createEnemies();
 
         this.physics.add.collider(player, walls);
         this.physics.add.collider(player, enemies, hitEnemy, null, this);
+        this.physics.add.overlap(player,coins,collectItem,null,this);
         this.physics.add.overlap(player, goal, reachGoal, null, this);
 
         cursors = this.input.keyboard.createCursorKeys();
@@ -160,6 +167,9 @@ function hitEnemy(player, enemy) {
     restartButton.setOrigin(0.5);
 }
 
+function collectItem(player,collectible){
+    collectible.disableBody(true,true);
+}
 function reachGoal(player, goal) {
     this.physics.pause();
     player.setTint(0x00ff00);
