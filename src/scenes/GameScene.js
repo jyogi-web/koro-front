@@ -7,7 +7,6 @@ let goal;
 let mazeWidth = 10;
 let mazeHeight = 10;
 let cellSize = 80;
-let enemies;
 let coins;
 let movingObstacles;
 
@@ -49,10 +48,7 @@ export default class GameScene extends Phaser.Scene {
             key: 'coin',
             setXY: { x: 100, y: 100 }
         });
-        //敵を作成
-        enemies = this.physics.add.group();
-        this.createEnemies();
-        
+        //動く敵を作成
         movingObstacles = this.physics.add.group();
         let movingObstacle1 = movingObstacles.create(300, 150, 'obstacle');
         movingObstacle1.setVelocityX(200);
@@ -61,7 +57,6 @@ export default class GameScene extends Phaser.Scene {
 
         // 衝突と重なりを設定
         this.physics.add.collider(player, walls);
-        this.physics.add.collider(player, enemies, hitEnemy, null, this);
         this.physics.add.overlap(player, coins, collectItem, null, this);
         this.physics.add.overlap(player, goal, reachGoal, null, this);
         this.physics.add.collider(player, movingObstacle1, hitEnemy, null, this);
@@ -172,12 +167,6 @@ export default class GameScene extends Phaser.Scene {
                 }
             }
         }
-    }
-
-    createEnemies() {
-        // 指定された位置に敵を作成
-        enemies.create(400, 300, 'enemy');
-        enemies.create(200, 200, 'enemy');
     }
 }
 
