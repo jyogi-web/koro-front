@@ -53,11 +53,21 @@ export default class GameScene extends Phaser.Scene {
         goal = this.physics.add.staticGroup();
         goal.create(mazeWidth * cellSize - 40, mazeHeight * cellSize - 40, 'goal');
 
-        // コインを作成
-        coins = this.physics.add.group({
-            key: 'coin',
-            setXY: { x: 100, y: 100 }
-        });
+        // コインを格納するためのグループを作成
+        coins = this.physics.add.group();
+
+        for (let i = 0; i < totalCoins; i++) {
+            // ランダムな位置にコインを作成
+            let x = Phaser.Math.Between(0, 800);
+            let y = Phaser.Math.Between(0, 600);
+
+            // コインをグループに追加
+            coin = coins.create(x, y, 'coin');
+
+            // コインとプレイヤーが重なったときの処理を設定
+            this.physics.add.overlap(player, coin, collectItem, null, this);
+        }
+
         //動く敵を作成
         //1
         movingObstacles = this.physics.add.group();
