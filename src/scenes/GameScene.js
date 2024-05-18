@@ -72,63 +72,48 @@ export default class GameScene extends Phaser.Scene {
         //動く敵を作成
         //1
         movingObstacles = this.physics.add.group();
-        let movingObstacle1 = movingObstacles.create(800, 120, 'Obstacle');
+        let movingObstacle1 = movingObstacles.create(800, 110, 'Obstacle');
         movingObstacle1.setVelocityX(200);
         movingObstacle1.setCollideWorldBounds(true);
         movingObstacle1.setBounce(1);
-        movingObstacle1.setScale(0.25);
+        movingObstacle1.setScale(0.125);
 
         //2
         movingObstacles2 = this.physics.add.group();
-        let movingObstacle2 = movingObstacles2.create(700, 200, 'Obstacle');
+        let movingObstacle2 = movingObstacles2.create(700, 220, 'Obstacle');
         movingObstacle2.setVelocityX(200);
         movingObstacle2.setCollideWorldBounds(true);
         movingObstacle2.setBounce(1);
-        movingObstacle2.setScale(0.25);
-        //3
+        movingObstacle2.setScale(0.125);
+        // //3
         movingObstacles3 = this.physics.add.group();
-        let movingObstacle3 = movingObstacles3.create(600, 280, 'Obstacle');
+        let movingObstacle3 = movingObstacles3.create(600, 330, 'Obstacle');
         movingObstacle3.setVelocityX(200);
         movingObstacle3.setCollideWorldBounds(true);
         movingObstacle3.setBounce(1);
-        movingObstacle3.setScale(0.25);
-        //4
+        movingObstacle3.setScale(0.125);
+        // //4
         movingObstacles4 = this.physics.add.group();
-        let movingObstacle4 = movingObstacles4.create(500, 360, 'Obstacle');
+        let movingObstacle4 = movingObstacles4.create(500, 440, 'Obstacle');
         movingObstacle4.setVelocityX(200);
         movingObstacle4.setCollideWorldBounds(true);
         movingObstacle4.setBounce(1);
-        movingObstacle4.setScale(0.25);
-        //5
+        movingObstacle4.setScale(0.125);
+        // //5
         movingObstacles5 = this.physics.add.group();
-        let movingObstacle5 = movingObstacles5.create(400, 440, 'Obstacle');
+        let movingObstacle5 = movingObstacles5.create(400, 550, 'Obstacle');
         movingObstacle5.setVelocityX(200);
         movingObstacle5.setCollideWorldBounds(true);
         movingObstacle5.setBounce(1);
-        movingObstacle5.setScale(0.25);
-        //6
+        movingObstacle5.setScale(0.125);
+        // //6
         movingObstacles6 = this.physics.add.group();
-        let movingObstacle6 = movingObstacles6.create(300, 520, 'Obstacle');
+        let movingObstacle6 = movingObstacles6.create(300, 660, 'Obstacle');
         movingObstacle6.setVelocityX(200);
         movingObstacle6.setCollideWorldBounds(true);
         movingObstacle6.setBounce(1);
-        movingObstacle6.setScale(0.25);
-        //7
-        movingObstacles7 = this.physics.add.group();
-        let movingObstacle7 = movingObstacles7.create(200, 600, 'Obstacle');
-        movingObstacle7.setVelocityX(200);
-        movingObstacle7.setCollideWorldBounds(true);
-        movingObstacle7.setBounce(1);
-        movingObstacle7.setScale(0.25);
-        //8
-        movingObstacles8 = this.physics.add.group();
-        let movingObstacle8 = movingObstacles8.create(100, 680, 'Obstacle');
-        movingObstacle8.setVelocityX(200);
-        movingObstacle8.setCollideWorldBounds(true);
-        movingObstacle8.setBounce(1);
-        movingObstacle8.setScale(0.25);
-
-
+        movingObstacle6.setScale(0.125);
+        
         // 衝突と重なりを設定
         this.physics.add.collider(player, walls);
         this.physics.add.overlap(player, coins, collectItem, null, this);
@@ -139,9 +124,7 @@ export default class GameScene extends Phaser.Scene {
         this.physics.add.collider(player, movingObstacle4, hitEnemy, null, this);
         this.physics.add.collider(player, movingObstacle5, hitEnemy, null, this);
         this.physics.add.collider(player, movingObstacle6, hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacle7, hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacle8, hitEnemy, null, this);
-
+        
         // プレイヤーの移動用のカーソルキーを設定
         cursors = this.input.keyboard.createCursorKeys();
 
