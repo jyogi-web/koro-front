@@ -7,11 +7,18 @@ let goal;
 let mazeWidth = 10;
 let mazeHeight = 10;
 let cellSize = 80;
-let enemies;
 let coins;
 let coin;
 let collectedCoins = 0;
 let totalCoins = 10;
+let movingObstacles;
+let movingObstacles2;
+let movingObstacles3;
+let movingObstacles4;
+let movingObstacles5;
+let movingObstacles6;
+let movingObstacles7;
+let movingObstacles8;
 
 // メインのゲームシーンを定義
 export default class GameScene extends Phaser.Scene {
@@ -60,15 +67,66 @@ export default class GameScene extends Phaser.Scene {
             // コインとプレイヤーが重なったときの処理を設定
             this.physics.add.overlap(player, coin, collectItem, null, this);
         }
-        // 敵を作成
-        enemies = this.physics.add.group();
-        this.createEnemies();
+
+        //動く敵を作成
+        //1
+        movingObstacles = this.physics.add.group();
+        let movingObstacle1 = movingObstacles.create(800, 120, 'obstacle');
+        movingObstacle1.setVelocityX(200);
+        movingObstacle1.setCollideWorldBounds(true);
+        movingObstacle1.setBounce(1);
+        //2
+        movingObstacles2 = this.physics.add.group();
+        let movingObstacle2 = movingObstacles2.create(700, 200, 'Obstacle');
+        movingObstacle2.setVelocityX(200);
+        movingObstacle2.setCollideWorldBounds(true);
+        movingObstacle2.setBounce(1);
+        //3
+        movingObstacles3 = this.physics.add.group();
+        let movingObstacle3 = movingObstacles3.create(600, 280, 'Obstacle');
+        movingObstacle3.setVelocityX(200);
+        movingObstacle3.setCollideWorldBounds(true);
+        movingObstacle3.setBounce(1);
+        //4
+        movingObstacles4 = this.physics.add.group();
+        let movingObstacle4 = movingObstacles4.create(500, 360, 'Obstacle');
+        movingObstacle4.setVelocityX(200);
+        movingObstacle4.setCollideWorldBounds(true);
+        movingObstacle4.setBounce(1);
+        //5
+        movingObstacles5 = this.physics.add.group();
+        let movingObstacle5 = movingObstacles5.create(400, 440, 'Obstacle');
+        movingObstacle5.setVelocityX(200);
+        movingObstacle5.setCollideWorldBounds(true);
+        movingObstacle5.setBounce(1);
+        //6
+        movingObstacles6 = this.physics.add.group();
+        let movingObstacle6 = movingObstacles6.create(300, 520, 'Obstacle');
+        movingObstacle6.setVelocityX(200);
+        movingObstacle6.setCollideWorldBounds(true);
+        movingObstacle6.setBounce(1);
+        //7
+        movingObstacles7 = this.physics.add.group();
+        let movingObstacle7 = movingObstacles7.create(200, 600, 'Obstacle');
+        movingObstacle7.setVelocityX(200);
+        movingObstacle7.setCollideWorldBounds(true);
+        movingObstacle7.setBounce(1);
+        //8
+        movingObstacles8 = this.physics.add.group();
+        let movingObstacle8 = movingObstacles8.create(100, 680, 'Obstacle');
+        movingObstacle8.setVelocityX(200);
+        movingObstacle8.setCollideWorldBounds(true);
+        movingObstacle8.setBounce(1);
+      
+        
+      
 
         // 衝突と重なりを設定
         this.physics.add.collider(player, walls);
-        this.physics.add.collider(player, enemies, hitEnemy, null, this);
         this.physics.add.overlap(player, coins, collectItem, null, this);
         this.physics.add.overlap(player, goal, reachGoal, null, this);
+        this.physics.add.collider(player, movingObstacle1, hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacle2, hitEnemy, null, this);
 
         // プレイヤーの移動用のカーソルキーを設定
         cursors = this.input.keyboard.createCursorKeys();
@@ -176,12 +234,6 @@ export default class GameScene extends Phaser.Scene {
                 }
             }
         }
-    }
-
-    createEnemies() {
-        // 指定された位置に敵を作成
-        enemies.create(500, 500, 'enemy');
-        enemies.create(500, 240, 'enemy');
     }
 }
 
