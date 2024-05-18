@@ -8,9 +8,6 @@ let mazeWidth = 10;
 let mazeHeight = 10;
 let cellSize = 80;
 let coins;
-let coin;
-let collectedCoins = 0;
-let totalCoins = 10;
 let movingObstacles;
 let movingObstacles2;
 let movingObstacles3;
@@ -19,6 +16,9 @@ let movingObstacles5;
 let movingObstacles6;
 let movingObstacles7;
 let movingObstacles8;
+let movingObstacles9;
+let movingObstacles10;
+let movingObstacles11;
 
 // メインのゲームシーンを定義
 export default class GameScene extends Phaser.Scene {
@@ -117,9 +117,27 @@ export default class GameScene extends Phaser.Scene {
         movingObstacle8.setVelocityX(200);
         movingObstacle8.setCollideWorldBounds(true);
         movingObstacle8.setBounce(1);
-
-
-
+        //9
+        movingObstacles9 = this.physics.add.group();
+        let movingObstacle9 = movingObstacles9.create(700, 120, 'Obstacle');
+        movingObstacle9.setVelocityX(400);
+        movingObstacle9.setVelocityY(300);
+        movingObstacle9.setCollideWorldBounds(true);
+        movingObstacle9.setBounce(1.05);
+        //10
+        movingObstacles10 = this.physics.add.group();
+        let movingObstacle10 = movingObstacles10.create(670, 90, 'Obstacle');
+        movingObstacle10.setVelocityX(400);
+        movingObstacle10.setVelocityY(300);
+        movingObstacle10.setCollideWorldBounds(true);
+        movingObstacle10.setBounce(1.05);
+        //11
+        movingObstacles11 = this.physics.add.group();
+        let movingObstacle11 = movingObstacles11.create(640, 60, 'Obstacle');
+        movingObstacle11.setVelocityX(400);
+        movingObstacle11.setVelocityY(300);
+        movingObstacle11.setCollideWorldBounds(true);
+        movingObstacle11.setBounce(1.05);
 
         // 衝突と重なりを設定
         this.physics.add.collider(player, walls);
@@ -127,6 +145,16 @@ export default class GameScene extends Phaser.Scene {
         this.physics.add.overlap(player, goal, reachGoal, null, this);
         this.physics.add.collider(player, movingObstacle1, hitEnemy, null, this);
         this.physics.add.collider(player, movingObstacle2, hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacle3, hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacle4, hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacle5, hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacle6, hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacle7, hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacle8, hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacle9, hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacle10, hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacle11, hitEnemy, null, this);
+        
 
         // プレイヤーの移動用のカーソルキーを設定
         cursors = this.input.keyboard.createCursorKeys();
@@ -254,27 +282,16 @@ function hitEnemy(player, enemy) {
 function collectItem(player, collectible) {
     // コインを無効化して非表示にする
     collectible.disableBody(true, true);
-    // 収集したコインの数を増やす
-    collectedCoins++;
-    // 全てのコインを収集した場合
-    if (collectedCoins === totalCoins) {
-        goal.children.iterate(child => {
-            child.setTint(0x00ff00);
-        });
-    }
 }
 
 // ゴールに到達したときの処理を行う関数
 function reachGoal(player, goal) {
-    // 全てのコインを収集しているか確認
-    if (collectedCoins === totalCoins) {
-        this.physics.pause();
-        player.setTint(0x00ff00);
-        const goalText = this.add.text(400, 300, 'You Win!', { fontSize: '64px', fill: '#00ff00' });
-        goalText.setOrigin(0.5);
-        const restartButton = this.add.text(400, 400, 'Menu', { fontSize: '32px', fill: '#ffffff' })
-            .setInteractive()
-            .on('pointerdown', () => this.scene.start('StartScene'));
-        restartButton.setOrigin(0.5);
-    }
+    this.physics.pause();
+    player.setTint(0x00ff00);
+    const goalText = this.add.text(400, 300, 'You Win!', { fontSize: '64px', fill: '#00ff00' });
+    goalText.setOrigin(0.5);
+    const restartButton = this.add.text(400, 400, 'Menu', { fontSize: '32px', fill: '#ffffff' })
+        .setInteractive()
+        .on('pointerdown', () => this.scene.start('StartScene'));
+    restartButton.setOrigin(0.5);
 }
