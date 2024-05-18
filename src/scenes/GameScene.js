@@ -8,6 +8,9 @@ let mazeWidth = 10;
 let mazeHeight = 10;
 let cellSize = 80;
 let coins;
+let coin;
+let collectedCoins = 0;
+let totalCoins = 10;
 let movingObstacles;
 let movingObstacles2;
 let movingObstacles3;
@@ -154,7 +157,6 @@ export default class GameScene extends Phaser.Scene {
         this.physics.add.collider(player, movingObstacle9, hitEnemy, null, this);
         this.physics.add.collider(player, movingObstacle10, hitEnemy, null, this);
         this.physics.add.collider(player, movingObstacle11, hitEnemy, null, this);
-        
 
         // プレイヤーの移動用のカーソルキーを設定
         cursors = this.input.keyboard.createCursorKeys();
@@ -282,16 +284,27 @@ function hitEnemy(player, enemy) {
 function collectItem(player, collectible) {
     // コインを無効化して非表示にする
     collectible.disableBody(true, true);
+    // 収集したコインの数を増やす
+    collectedCoins++;
+    // 全てのコインを収集した場合
+    if (collectedCoins === totalCoins) {
+        goal.children.iterate(child => {
+            child.setTint(0x00ff00);
+        });
+    }
 }
 
 // ゴールに到達したときの処理を行う関数
 function reachGoal(player, goal) {
-    this.physics.pause();
-    player.setTint(0x00ff00);
-    const goalText = this.add.text(400, 300, 'You Win!', { fontSize: '64px', fill: '#00ff00' });
-    goalText.setOrigin(0.5);
-    const restartButton = this.add.text(400, 400, 'Menu', { fontSize: '32px', fill: '#ffffff' })
-        .setInteractive()
-        .on('pointerdown', () => this.scene.start('StartScene'));
-    restartButton.setOrigin(0.5);
+    // 全てのコインを収集しているか確認
+    if (collectedCoins === totalCoins) {
+        this.physics.pause();
+        player.setTint(0x00ff00);
+        const goalText = this.add.text(400, 300, 'You Win!', { fontSize: '64px', fill: '#00ff00' });
+        goalText.setOrigin(0.5);
+        const restartButton = this.add.text(400, 400, 'Menu', { fontSize: '32px', fill: '#ffffff' })
+            .setInteractive()
+            .on('pointerdown', () => this.scene.start('StartScene'));
+        restartButton.setOrigin(0.5);
+    }
 }
