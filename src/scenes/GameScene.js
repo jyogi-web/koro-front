@@ -11,8 +11,6 @@ let coins;
 let coin;
 let collectedCoins = 0;
 let totalCoins = 10;
-let score = 0;
-let scoreText;
 let currentLevel = 1;
 let movingObstacles;
 let movingObstacles2;
@@ -132,8 +130,6 @@ export default class GameScene extends Phaser.Scene {
         // プレイヤーの移動用のカーソルキーを設定
         cursors = this.input.keyboard.createCursorKeys();
 
-        // スコアのテキストを作成
-        scoreText = this.add.text(10, 10, 'Score: ' + score, { fontSize: '32px', fill: '#ffffff' });
 
         // カメラをプレイヤーに追従させ、ズームレベルを調整
         this.cameras.main.startFollow(player);
@@ -260,9 +256,6 @@ export default class GameScene extends Phaser.Scene {
         collectible.disableBody(true, true);
         // 収集したコインの数を増やす
         collectedCoins++;
-        // スコアを増やす
-        score += 10;
-        scoreText.setText('Score: ' + score);
         // コインを5個以上集めたら操作を反転させる
         if (collectedCoins >= 5) {
             controlsInverted = true;
