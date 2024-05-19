@@ -19,6 +19,7 @@ let movingObstacles4;
 let movingObstacles5;
 let movingObstacles6;
 let controlsInverted = false;
+let scoreText
 
 export default class GameScene extends Phaser.Scene {
     constructor() {
@@ -120,12 +121,12 @@ export default class GameScene extends Phaser.Scene {
         this.physics.add.collider(player, walls);
         this.physics.add.overlap(player, coins, this.collectItem, null, this);
         this.physics.add.overlap(player, goal, this.reachGoal, null, this);
-        this.physics.add.collider(player, movingObstacle1, this.hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacle2, this.hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacle3, this.hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacle4, this.hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacle5, this.hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacle6, this.hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacle1, this.hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacle2, this.hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacle3, this.hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacle4, this.hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacle5, this.hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacle6, this.hitEnemy, null, this);
 
         // プレイヤーの移動用のカーソルキーを設定
         cursors = this.input.keyboard.createCursorKeys();
@@ -134,8 +135,10 @@ export default class GameScene extends Phaser.Scene {
         // カメラをプレイヤーに追従させ、ズームレベルを調整
         this.cameras.main.startFollow(player);
         this.cameras.main.setZoom(1);
-    }
 
+        // スコアテキストの生成
+        scoreText = this.add.text(15, 30,'score: 0', {fontSize: '15px',fill:'#FFF' })
+    }
     update() {
         // プレイヤーの速度をリセット
         player.setVelocity(0);
@@ -167,7 +170,6 @@ export default class GameScene extends Phaser.Scene {
             }
         }
     }
-
     createMaze(rows, cols, cellWidth, cellHeight, offsetX, offsetY) {
         // 迷路のグリッドを初期化
         const maze = [];
@@ -256,6 +258,7 @@ export default class GameScene extends Phaser.Scene {
         collectible.disableBody(true, true);
         // 収集したコインの数を増やす
         collectedCoins++;
+        scoreText.setText(`score: ${collectedCoins * 10}`);
         // コインを5個以上集めたら操作を反転させる
         if (collectedCoins >= 5) {
             controlsInverted = true;
@@ -266,6 +269,12 @@ export default class GameScene extends Phaser.Scene {
                 child.setTint(0x00ff00);
             });
         }
+        if (gameOverText) {
+            score += 10;
+            scoreText.setText('Score: ' + score);
+        }
+        
+        
     }
 
     // ゴールに到達したときの処理を行う関数
