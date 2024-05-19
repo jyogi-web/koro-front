@@ -11,18 +11,17 @@ let coins;
 let coin;
 let collectedCoins = 0;
 let totalCoins = 10;
+let score = 0;
+let scoreText;
+let levelText;
+let currentLevel = 1;
 let movingObstacles;
 let movingObstacles2;
 let movingObstacles3;
 let movingObstacles4;
 let movingObstacles5;
 let movingObstacles6;
-let movingObstacles7;
-let movingObstacles8;
 let controlsInverted = false;
-
-
-// メインのゲームシーンを定義
 export default class GameScene extends Phaser.Scene {
     constructor() {
         super({ key: 'GameScene' });
@@ -30,9 +29,8 @@ export default class GameScene extends Phaser.Scene {
 
     preload() {
         // 必要なアセットを読み込む
-        this.load.image('player', 'path/to/player.png');
-        this.load.image('goal', 'path/to/goal.png');
-        this.load.image('wall', 'path/to/wall.png');
+        this.load.image('player', 'player.png');
+        this.load.image('goal', 'goal.png');
         this.load.image('coin', 'assets/R (4).png');
         this.load.image('Obstacle', 'assets/download_image_1716035805113.png');
     }
@@ -57,7 +55,6 @@ export default class GameScene extends Phaser.Scene {
 
         // コインを格納するためのグループを作成
         coins = this.physics.add.group();
-
         for (let i = 0; i < totalCoins; i++) {
             // ランダムな位置にコインを作成
             let x = Phaser.Math.Between(0, 800);
@@ -86,21 +83,21 @@ export default class GameScene extends Phaser.Scene {
         movingObstacle2.setCollideWorldBounds(true);
         movingObstacle2.setBounce(1);
         movingObstacle2.setScale(0.125);
-        // //3
+        //3
         movingObstacles3 = this.physics.add.group();
         let movingObstacle3 = movingObstacles3.create(600, 330, 'Obstacle');
         movingObstacle3.setVelocityX(200);
         movingObstacle3.setCollideWorldBounds(true);
         movingObstacle3.setBounce(1);
         movingObstacle3.setScale(0.125);
-        // //4
+        //4
         movingObstacles4 = this.physics.add.group();
         let movingObstacle4 = movingObstacles4.create(500, 440, 'Obstacle');
         movingObstacle4.setVelocityX(200);
         movingObstacle4.setCollideWorldBounds(true);
         movingObstacle4.setBounce(1);
         movingObstacle4.setScale(0.125);
-        // //5
+        //5
         movingObstacles5 = this.physics.add.group();
         let movingObstacle5 = movingObstacles5.create(400, 550, 'Obstacle');
         movingObstacle5.setVelocityX(200);
@@ -114,7 +111,7 @@ export default class GameScene extends Phaser.Scene {
         movingObstacle6.setCollideWorldBounds(true);
         movingObstacle6.setBounce(1);
         movingObstacle6.setScale(0.125);
-        
+
         // 衝突と重なりを設定
         this.physics.add.collider(player, walls);
         this.physics.add.overlap(player, coins, collectItem, null, this);
@@ -125,9 +122,15 @@ export default class GameScene extends Phaser.Scene {
         this.physics.add.collider(player, movingObstacle4, hitEnemy, null, this);
         this.physics.add.collider(player, movingObstacle5, hitEnemy, null, this);
         this.physics.add.collider(player, movingObstacle6, hitEnemy, null, this);
-        
+
         // プレイヤーの移動用のカーソルキーを設定
         cursors = this.input.keyboard.createCursorKeys();
+
+        // スコアのテキストを作成
+        const uiContainer = this.add.container(400, 30).setDepth(1);
+        scoreText = this.add.text(0, 0, 'Score: ' + score, { fontSize: '32px', fill: '#ffffff', backgroundColor: '#000000' });
+
+        uiContainer.add([scoreText]);
 
         // カメラをプレイヤーに追従させ、ズームレベルを調整
         this.cameras.main.startFollow(player);
@@ -260,6 +263,7 @@ function hitEnemy(player, enemy) {
         .on('pointerdown', () => {
             collectedCoins = 0;
             controlsInverted = false;
+            score = 0;
             this.scene.restart();
         });
     restartButton.setOrigin(0.5);
@@ -271,6 +275,9 @@ function collectItem(player, collectible) {
     collectible.disableBody(true, true);
     // 収集したコインの数を増やす
     collectedCoins++;
+    // スコアを増やす
+    score += 10;
+    scoreText.setText('Score: ' + score);
     // コインを5個以上集めたら操作を反転させる
     if (collectedCoins >= 5) {
         controlsInverted = true;
@@ -291,19 +298,14 @@ function reachGoal(player, goal) {
         player.setTint(0x00ff00);
         const goalText = this.add.text(400, 300, 'You Win!', { fontSize: '64px', fill: '#00ff00' });
         goalText.setOrigin(0.5);
-        const restartButton = this.add.text(400, 400, 'Menu', { fontSize: '32px', fill: '#ffffff' })
+        const nextLevelButton = this.add.text(400, 400, 'Next Level', { fontSize: '32px', fill: '#ffffff' })
             .setInteractive()
             .on('pointerdown', () => {
                 collectedCoins = 0;
                 controlsInverted = false;
-                resetItems.call(this);
-                this.scene.start('StartScene');
+                currentLevel++;
+                this.scene.restart();
             });
-        restartButton.setOrigin(0.5);
+        nextLevelButton.setOrigin(0.5);
     }
-}
-// アイテムをリセットする関数
-function resetItems() {
-    // 既存のコインを全て削除
-    coins.clear(true, true);
 }
