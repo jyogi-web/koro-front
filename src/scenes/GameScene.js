@@ -149,6 +149,13 @@ export default class GameScene extends Phaser.Scene {
         // プレイヤーの移動用のカーソルキーを設定
         cursors = this.input.keyboard.createCursorKeys();
 
+        this.wasd = {
+            up: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
+            down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S),
+            left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A),
+            right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D)
+          };
+
         // カメラをプレイヤーに追従させ、ズームレベルを調整
         this.cameras.main.startFollow(player);
         this.cameras.main.setZoom(0.5);
@@ -159,15 +166,15 @@ export default class GameScene extends Phaser.Scene {
         player.setVelocity(0);
 
         // プレイヤーの移動を処理
-        if (cursors.left.isDown) {
+        if (cursors.left.isDown || this.wasd.left.isDown) {
             player.setVelocityX(-200);
-        } else if (cursors.right.isDown) {
+        } else if (cursors.right.isDown || this.wasd.right.isDown) {
             player.setVelocityX(200);
         }
 
-        if (cursors.up.isDown) {
+        if (cursors.up.isDown || this.wasd.up.isDown) {
             player.setVelocityY(-200);
-        } else if (cursors.down.isDown) {
+        } else if (cursors.down.isDown || this.wasd.down.isDown) {
             player.setVelocityY(200);
         }
     }
