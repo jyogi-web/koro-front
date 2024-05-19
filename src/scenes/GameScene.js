@@ -29,7 +29,7 @@ export default class GameScene extends Phaser.Scene {
     preload() {
         // 必要なアセットを読み込む
         this.load.image('player', 'assets/R (4).png');
-        this.load.image('goal', 'goal.png');
+        this.load.image('goal', 'assets/goal.png');
         this.load.image('coin', 'assets/R (4).png');
         this.load.image('Obstacle', 'assets/download_image_1716035805113.png');
     }
@@ -54,9 +54,11 @@ export default class GameScene extends Phaser.Scene {
         // 迷路を生成
         this.createMaze(mazeWidth, mazeHeight, cellSize, cellSize, centerX - worldWidth / 2, centerY - worldHeight / 2);
 
-        // ゴールを作成
+        // ゴールを作成して非表示にする
         goal = this.physics.add.staticGroup();
-        goal.create(centerX + worldWidth / 2 - 40, centerY + worldHeight / 2 - 40, 'goal');
+        let goalSprite = goal.create(centerX + worldWidth / 2 - 40, centerY + worldHeight / 2 - 40, 'goal');
+        goalSprite.setVisible(false);
+        goalSprite.setScale(0.5);
 
         // コインを格納するためのグループを作成
         coins = this.physics.add.group();
@@ -121,12 +123,12 @@ export default class GameScene extends Phaser.Scene {
         this.physics.add.collider(player, walls);
         this.physics.add.overlap(player, coins, this.collectItem, null, this);
         this.physics.add.overlap(player, goal, this.reachGoal, null, this);
-        this.physics.add.collider(player, movingObstacle1, this.hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacle2, this.hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacle3, this.hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacle4, this.hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacle5, this.hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacle6, this.hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacle1, this.hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacle2, this.hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacle3, this.hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacle4, this.hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacle5, this.hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacle6, this.hitEnemy, null, this);
 
         // プレイヤーの移動用のカーソルキーを設定
         cursors = this.input.keyboard.createCursorKeys();
@@ -273,7 +275,9 @@ export default class GameScene extends Phaser.Scene {
         }
         // 全てのコインを収集した場合
         if (collectedCoins === totalCoins) {
+            // ゴールを表示
             goal.children.iterate(child => {
+                child.setVisible(true);
                 child.setTint(0x00ff00);
             });
         }
