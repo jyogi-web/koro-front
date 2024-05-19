@@ -19,6 +19,7 @@ let movingObstacles4;
 let movingObstacles5;
 let movingObstacles6;
 let controlsInverted = false;
+let gameOver = false;
 
 export default class GameScene extends Phaser.Scene {
     constructor() {
@@ -120,16 +121,16 @@ export default class GameScene extends Phaser.Scene {
         this.physics.add.collider(player, walls);
         this.physics.add.overlap(player, coins, this.collectItem, null, this);
         this.physics.add.overlap(player, goal, this.reachGoal, null, this);
-        // this.physics.add.collider(player, movingObstacle1, this.hitEnemy, null, this);
-        // this.physics.add.collider(player, movingObstacle2, this.hitEnemy, null, this);
-        // this.physics.add.collider(player, movingObstacle3, this.hitEnemy, null, this);
-        // this.physics.add.collider(player, movingObstacle4, this.hitEnemy, null, this);
-        // this.physics.add.collider(player, movingObstacle5, this.hitEnemy, null, this);
-        // this.physics.add.collider(player, movingObstacle6, this.hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacle1, this.hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacle2, this.hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacle3, this.hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacle4, this.hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacle5, this.hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacle6, this.hitEnemy, null, this);
 
         // プレイヤーの移動用のカーソルキーを設定
         cursors = this.input.keyboard.createCursorKeys();
-
+        this.input.keyboard.on('keydown-ENTER', this.handleRestart, this);
 
         // カメラをプレイヤーに追従させ、ズームレベルを調整
         this.cameras.main.startFollow(player);
@@ -137,6 +138,10 @@ export default class GameScene extends Phaser.Scene {
     }
 
     update() {
+        if (gameOver) {
+            return;
+        }
+
         // プレイヤーの速度をリセット
         player.setVelocity(0);
 
@@ -250,7 +255,6 @@ export default class GameScene extends Phaser.Scene {
         }
     }
 
-    // コインを収集する関数
     collectItem(player, collectible) {
         // コインを無効化して非表示にする
         collectible.disableBody(true, true);
@@ -269,11 +273,11 @@ export default class GameScene extends Phaser.Scene {
         }
     }
 
-    // ゴールに到達したときの処理を行う関数
     reachGoal(player, goal) {
         // 全てのコインを収集しているか確認
         if (collectedCoins === totalCoins) {
             this.physics.pause();
+            gameOver = true;
             player.setTint(0x00ff00);
             const goalText = this.add.text(400, 300, 'You Win!', { fontSize: '64px', fill: '#00ff00' });
             goalText.setOrigin(0.5);
@@ -284,15 +288,16 @@ export default class GameScene extends Phaser.Scene {
                     controlsInverted = false;
                     player.clearTint();
                     currentLevel++;
+                    gameOver = false;
                     this.scene.restart();
                 });
             nextLevelButton.setOrigin(0.5);
         }
     }
 
-    // 敵との衝突を処理する関数
     hitEnemy(player, enemy) {
         this.physics.pause(); // 物理システムを一時停止
+        gameOver = true;
         player.setTint(0xff0000); // プレイヤーを赤色に変更
         const gameOverText = this.add.text(400, 300, 'Game Over', { fontSize: '64px', fill: '#ff0000' });
         gameOverText.setOrigin(0.5);
@@ -302,8 +307,19 @@ export default class GameScene extends Phaser.Scene {
                 collectedCoins = 0;
                 controlsInverted = false;
                 player.clearTint();
+                gameOver = false;
                 this.scene.restart();
             });
         restartButton.setOrigin(0.5);
+    }
+
+    handleRestart() {
+        if (gameOver) {
+            collectedCoins = 0;
+            controlsInverted = false;
+            player.clearTint();
+            gameOver = false;
+            this.scene.restart();
+        }
     }
 }
