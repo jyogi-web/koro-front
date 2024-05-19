@@ -120,12 +120,12 @@ export default class GameScene extends Phaser.Scene {
         this.physics.add.collider(player, walls);
         this.physics.add.overlap(player, coins, this.collectItem, null, this);
         this.physics.add.overlap(player, goal, this.reachGoal, null, this);
-        this.physics.add.collider(player, movingObstacle1, this.hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacle2, this.hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacle3, this.hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacle4, this.hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacle5, this.hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacle6, this.hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacle1, this.hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacle2, this.hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacle3, this.hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacle4, this.hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacle5, this.hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacle6, this.hitEnemy, null, this);
 
         // プレイヤーの移動用のカーソルキーを設定
         cursors = this.input.keyboard.createCursorKeys();
@@ -259,6 +259,7 @@ export default class GameScene extends Phaser.Scene {
         // コインを5個以上集めたら操作を反転させる
         if (collectedCoins >= 5) {
             controlsInverted = true;
+            player.setTint(0x00ff00);
         }
         // 全てのコインを収集した場合
         if (collectedCoins === totalCoins) {
@@ -281,6 +282,7 @@ export default class GameScene extends Phaser.Scene {
                 .on('pointerdown', () => {
                     collectedCoins = 0;
                     controlsInverted = false;
+                    player.clearTint();
                     currentLevel++;
                     this.scene.restart();
                 });
@@ -299,6 +301,7 @@ export default class GameScene extends Phaser.Scene {
             .on('pointerdown', () => {
                 collectedCoins = 0;
                 controlsInverted = false;
+                player.clearTint();
                 this.scene.restart();
             });
         restartButton.setOrigin(0.5);
