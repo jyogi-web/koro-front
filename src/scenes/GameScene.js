@@ -299,7 +299,6 @@ export default class GameScene extends Phaser.Scene {
             .on('pointerdown', () => {
                 collectedCoins = 0;
                 controlsInverted = false;
-                score = 0;
                 this.scene.restart();
             });
         restartButton.setOrigin(0.5);
