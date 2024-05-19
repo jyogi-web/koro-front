@@ -43,7 +43,7 @@ export default class GameScene extends Phaser.Scene {
 
         // カメラとワールドの境界を設定
         this.cameras.main.setBounds(0, 0, worldWidth, worldHeight);
-        this.physics.world.setBounds(0, 0, worldWidth, worldHeight);
+        this.physics.world.setBounds(0, 0, worldWidth + 200, worldHeight);
 
         // プレイヤーを作成し、ワールドの境界と衝突させる
         player = this.physics.add.sprite(centerX - worldWidth / 2 + 40, centerY - worldHeight / 2 + 40, 'player');
