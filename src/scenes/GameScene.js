@@ -20,6 +20,7 @@ let movingObstacles5;
 let movingObstacles6;
 let controlsInverted = false;
 let gameOver = false;
+let cameraTimer;
 
 export default class GameScene extends Phaser.Scene {
     constructor() {
@@ -42,7 +43,6 @@ export default class GameScene extends Phaser.Scene {
 
         // カメラとワールドの境界を設定
         this.cameras.main.setBounds(0, 0, worldWidth, worldHeight);
-        this.physics.world.setBounds(0, 0, worldWidth + 200, worldHeight);
 
         // プレイヤーを作成し、ワールドの境界と衝突させる
         player = this.physics.add.sprite(centerX - worldWidth / 2 + 40, centerY - worldHeight / 2 + 40, 'player');
@@ -123,12 +123,12 @@ export default class GameScene extends Phaser.Scene {
         this.physics.add.collider(player, walls);
         this.physics.add.overlap(player, coins, this.collectItem, null, this);
         this.physics.add.overlap(player, goal, this.reachGoal, null, this);
-        // this.physics.add.collider(player, movingObstacle1, this.hitEnemy, null, this);
-        // this.physics.add.collider(player, movingObstacle2, this.hitEnemy, null, this);
-        // this.physics.add.collider(player, movingObstacle3, this.hitEnemy, null, this);
-        // this.physics.add.collider(player, movingObstacle4, this.hitEnemy, null, this);
-        // this.physics.add.collider(player, movingObstacle5, this.hitEnemy, null, this);
-        // this.physics.add.collider(player, movingObstacle6, this.hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacles, this.hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacles2, this.hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacles3, this.hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacles4, this.hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacles5, this.hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacles6, this.hitEnemy, null, this);
 
         // プレイヤーの移動用のカーソルキーを設定
         cursors = this.input.keyboard.createCursorKeys();
@@ -143,6 +143,12 @@ export default class GameScene extends Phaser.Scene {
         // カメラをプレイヤーに追従させ、ズームレベルを調整
         this.cameras.main.startFollow(player);
         this.cameras.main.setZoom(1);
+        // 一定時間後にプレイヤー視点に切り替える
+        cameraTimer = this.time.addEvent({
+            delay: 10000, // 10秒後に実行
+            callback: this.switchToPlayerView,
+            callbackScope: this
+        });
     }
 
     update() {
@@ -191,9 +197,9 @@ export default class GameScene extends Phaser.Scene {
             }
         }
 
-        // スタックと開始位置を初期化
+        // 迷路生成のためのスタックと初期セルを設定
         const stack = [];
-        const currentCell = { x: 0, y: 0 };
+        let currentCell = { x: 0, y: 0 };
         maze[currentCell.y][currentCell.x].visited = true;
         stack.push(currentCell);
 
@@ -331,5 +337,16 @@ export default class GameScene extends Phaser.Scene {
             gameOver = false;
             this.scene.restart();
         }
+    }
+    switchToPlayerView() {
+        // プレイヤー視点にカメラを切り替える処理
+        this.cameras.main.setZoom(2);
+        this.cameras.main.startFollow(player, true, 0.08, 0.08);
+
+        // 新しいズームレベルに基づいてカメラの境界を更新
+        const worldWidth = mazeWidth * cellSize;
+        const worldHeight = mazeHeight * cellSize;
+        const zoomLevel = this.cameras.main.zoom;
+        this.cameras.main.setBounds(0, 0, worldWidth * zoomLevel, worldHeight * zoomLevel);
     }
 }
