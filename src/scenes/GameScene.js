@@ -144,17 +144,16 @@ export default class GameScene extends Phaser.Scene {
         // カメラをプレイヤーに追従させ、ズームレベルを調整
         this.cameras.main.startFollow(player);
         this.cameras.main.setZoom(1);
-      
+
         // 一定時間後にプレイヤー視点に切り替える
         cameraTimer = this.time.addEvent({
             delay: 10000, // 10秒後に実行
             callback: this.switchToPlayerView,
             callbackScope: this
         });
-    }
 
         // スコアテキストの生成
-        scoreText = this.add.text(15, 30,'score: 0', {fontSize: '15px',fill:'#FFF' })
+        scoreText = this.add.text(15, 30, 'score: 0', { fontSize: '15px', fill: '#FFF' })
     }
     update() {
         if (gameOver) {
@@ -292,13 +291,8 @@ export default class GameScene extends Phaser.Scene {
                 child.setTint(0x00ff00);
             });
         }
-        if (gameOverText) {
-            score += 10;
-            scoreText.setText('Score: ' + score);
-        }
-        
-        
     }
+
 
     reachGoal(player, goal) {
         // 全てのコインを収集しているか確認
