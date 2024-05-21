@@ -122,12 +122,12 @@ export default class GameSceneEasy extends Phaser.Scene {
         player.setVelocity(0);
 
         // プレイヤーの移動を処理
-        if (cursors.left.isDown) {
+        if (cursors.left.isDown || this.wasd.left.isDown) {
             player.setVelocityX(-200);
-        } else if (cursors.right.isDown) {
+        } else if (cursors.right.isDownthis.wasd.right.isDown) {
             player.setVelocityX(200);
         }
-        if (cursors.up.isDown) {
+        if (cursors.up.isDownthis.wasd.up.isDown) {
             player.setVelocityY(-200);
         } else if (cursors.down.isDown) {
             player.setVelocityY(200);
