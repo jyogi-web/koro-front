@@ -20,6 +20,8 @@ let movingObstacles5;
 let movingObstacles6;
 let controlsInverted = false;
 let scoreText
+let gameOver = false;
+let cameraTimer;
 
 export default class GameScene extends Phaser.Scene {
     constructor() {
@@ -29,7 +31,7 @@ export default class GameScene extends Phaser.Scene {
     preload() {
         // 必要なアセットを読み込む
         this.load.image('player', 'assets/R (4).png');
-        this.load.image('goal', 'goal.png');
+        this.load.image('goal', 'assets/goal.png');
         this.load.image('coin', 'assets/R (4).png');
         this.load.image('Obstacle', 'assets/download_image_1716035805113.png');
     }
@@ -42,7 +44,6 @@ export default class GameScene extends Phaser.Scene {
 
         // カメラとワールドの境界を設定
         this.cameras.main.setBounds(0, 0, worldWidth, worldHeight);
-        this.physics.world.setBounds(0, 0, worldWidth + 200, worldHeight);
 
         // プレイヤーを作成し、ワールドの境界と衝突させる
         player = this.physics.add.sprite(centerX - worldWidth / 2 + 40, centerY - worldHeight / 2 + 40, 'player');
@@ -54,9 +55,11 @@ export default class GameScene extends Phaser.Scene {
         // 迷路を生成
         this.createMaze(mazeWidth, mazeHeight, cellSize, cellSize, centerX - worldWidth / 2, centerY - worldHeight / 2);
 
-        // ゴールを作成
+        // ゴールを作成して非表示にする
         goal = this.physics.add.staticGroup();
-        goal.create(centerX + worldWidth / 2 - 40, centerY + worldHeight / 2 - 40, 'goal');
+        let goalSprite = goal.create(centerX + worldWidth / 2 - 40, centerY + worldHeight / 2 - 40, 'goal');
+        goalSprite.setVisible(false);
+        goalSprite.setScale(0.5);
 
         // コインを格納するためのグループを作成
         coins = this.physics.add.group();
@@ -121,51 +124,69 @@ export default class GameScene extends Phaser.Scene {
         this.physics.add.collider(player, walls);
         this.physics.add.overlap(player, coins, this.collectItem, null, this);
         this.physics.add.overlap(player, goal, this.reachGoal, null, this);
-        // this.physics.add.collider(player, movingObstacle1, this.hitEnemy, null, this);
-        // this.physics.add.collider(player, movingObstacle2, this.hitEnemy, null, this);
-        // this.physics.add.collider(player, movingObstacle3, this.hitEnemy, null, this);
-        // this.physics.add.collider(player, movingObstacle4, this.hitEnemy, null, this);
-        // this.physics.add.collider(player, movingObstacle5, this.hitEnemy, null, this);
-        // this.physics.add.collider(player, movingObstacle6, this.hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacles, this.hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacles2, this.hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacles3, this.hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacles4, this.hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacles5, this.hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacles6, this.hitEnemy, null, this);
 
         // プレイヤーの移動用のカーソルキーを設定
         cursors = this.input.keyboard.createCursorKeys();
-
+        this.input.keyboard.on('keydown-ENTER', this.handleRestart, this);
+        this.wasd = {
+            up: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
+            down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S),
+            left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A),
+            right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D)
+        };
 
         // カメラをプレイヤーに追従させ、ズームレベルを調整
         this.cameras.main.startFollow(player);
         this.cameras.main.setZoom(1);
+      
+        // 一定時間後にプレイヤー視点に切り替える
+        cameraTimer = this.time.addEvent({
+            delay: 10000, // 10秒後に実行
+            callback: this.switchToPlayerView,
+            callbackScope: this
+        });
+    }
 
         // スコアテキストの生成
         scoreText = this.add.text(15, 30,'score: 0', {fontSize: '15px',fill:'#FFF' })
     }
     update() {
+        if (gameOver) {
+            return;
+        }
+
         // プレイヤーの速度をリセット
         player.setVelocity(0);
 
         // プレイヤーの移動を処理
         if (controlsInverted) {
-            if (cursors.left.isDown) {
+            if (cursors.left.isDown || this.wasd.left.isDown) {
                 player.setVelocityX(200);
-            } else if (cursors.right.isDown) {
+            } else if (cursors.right.isDown || this.wasd.right.isDown) {
                 player.setVelocityX(-200);
             }
 
-            if (cursors.up.isDown) {
+            if (cursors.up.isDown || this.wasd.up.isDown) {
                 player.setVelocityY(200);
-            } else if (cursors.down.isDown) {
+            } else if (cursors.down.isDown || this.wasd.down.isDown) {
                 player.setVelocityY(-200);
             }
         } else {
-            if (cursors.left.isDown) {
+            if (cursors.left.isDown || this.wasd.left.isDown) {
                 player.setVelocityX(-200);
-            } else if (cursors.right.isDown) {
+            } else if (cursors.right.isDown || this.wasd.right.isDown) {
                 player.setVelocityX(200);
             }
 
-            if (cursors.up.isDown) {
+            if (cursors.up.isDown || this.wasd.up.isDown) {
                 player.setVelocityY(-200);
-            } else if (cursors.down.isDown) {
+            } else if (cursors.down.isDown || this.wasd.down.isDown) {
                 player.setVelocityY(200);
             }
         }
@@ -180,9 +201,9 @@ export default class GameScene extends Phaser.Scene {
             }
         }
 
-        // スタックと開始位置を初期化
+        // 迷路生成のためのスタックと初期セルを設定
         const stack = [];
-        const currentCell = { x: 0, y: 0 };
+        let currentCell = { x: 0, y: 0 };
         maze[currentCell.y][currentCell.x].visited = true;
         stack.push(currentCell);
 
@@ -252,7 +273,6 @@ export default class GameScene extends Phaser.Scene {
         }
     }
 
-    // コインを収集する関数
     collectItem(player, collectible) {
         // コインを無効化して非表示にする
         collectible.disableBody(true, true);
@@ -262,10 +282,13 @@ export default class GameScene extends Phaser.Scene {
         // コインを5個以上集めたら操作を反転させる
         if (collectedCoins >= 5) {
             controlsInverted = true;
+            player.setTint(0x00ff00);
         }
         // 全てのコインを収集した場合
         if (collectedCoins === totalCoins) {
+            // ゴールを表示
             goal.children.iterate(child => {
+                child.setVisible(true);
                 child.setTint(0x00ff00);
             });
         }
@@ -277,11 +300,11 @@ export default class GameScene extends Phaser.Scene {
         
     }
 
-    // ゴールに到達したときの処理を行う関数
     reachGoal(player, goal) {
         // 全てのコインを収集しているか確認
         if (collectedCoins === totalCoins) {
             this.physics.pause();
+            gameOver = true;
             player.setTint(0x00ff00);
             const goalText = this.add.text(400, 300, 'You Win!', { fontSize: '64px', fill: '#00ff00' });
             goalText.setOrigin(0.5);
@@ -290,16 +313,18 @@ export default class GameScene extends Phaser.Scene {
                 .on('pointerdown', () => {
                     collectedCoins = 0;
                     controlsInverted = false;
+                    player.clearTint();
                     currentLevel++;
+                    gameOver = false;
                     this.scene.restart();
                 });
             nextLevelButton.setOrigin(0.5);
         }
     }
 
-    // 敵との衝突を処理する関数
     hitEnemy(player, enemy) {
         this.physics.pause(); // 物理システムを一時停止
+        gameOver = true;
         player.setTint(0xff0000); // プレイヤーを赤色に変更
         const gameOverText = this.add.text(400, 300, 'Game Over', { fontSize: '64px', fill: '#ff0000' });
         gameOverText.setOrigin(0.5);
@@ -308,8 +333,31 @@ export default class GameScene extends Phaser.Scene {
             .on('pointerdown', () => {
                 collectedCoins = 0;
                 controlsInverted = false;
+                player.clearTint();
+                gameOver = false;
                 this.scene.restart();
             });
         restartButton.setOrigin(0.5);
+    }
+
+    handleRestart() {
+        if (gameOver) {
+            collectedCoins = 0;
+            controlsInverted = false;
+            player.clearTint();
+            gameOver = false;
+            this.scene.restart();
+        }
+    }
+    switchToPlayerView() {
+        // プレイヤー視点にカメラを切り替える処理
+        this.cameras.main.setZoom(2);
+        this.cameras.main.startFollow(player, true, 0.08, 0.08);
+
+        // 新しいズームレベルに基づいてカメラの境界を更新
+        const worldWidth = mazeWidth * cellSize;
+        const worldHeight = mazeHeight * cellSize;
+        const zoomLevel = this.cameras.main.zoom;
+        this.cameras.main.setBounds(0, 0, worldWidth * zoomLevel, worldHeight * zoomLevel);
     }
 }
