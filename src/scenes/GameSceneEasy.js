@@ -38,6 +38,9 @@ export default class GameSceneEasy extends Phaser.Scene {
         player = this.physics.add.sprite(40, 40, 'player');
         player.setCollideWorldBounds(true);
 
+        // カメラがプレイヤーを追従するように設定
+        this.cameras.main.startFollow(player);
+
         // 静的な壁のグループを作成
         walls = this.physics.add.staticGroup();
         // 迷路を生成
@@ -52,8 +55,8 @@ export default class GameSceneEasy extends Phaser.Scene {
 
         for (let i = 0; i < totalCoins; i++) {
             // ランダムな位置にコインを作成
-            let x = Phaser.Math.Between(0, 800);
-            let y = Phaser.Math.Between(0, 600);
+            let x = Phaser.Math.Between(0, mazeWidth * cellSize);
+            let y = Phaser.Math.Between(0, mazeHeight * cellSize);
 
             // コインをグループに追加
             coin = coins.create(x, y, 'coin');
@@ -63,25 +66,27 @@ export default class GameSceneEasy extends Phaser.Scene {
         }
 
         // 動く敵を作成
-        // 1
         movingObstacles1 = this.physics.add.group();
         let movingObstacle1 = movingObstacles1.create(700, 200, 'Obstacle');
         movingObstacle1.setVelocityX(200);
         movingObstacle1.setCollideWorldBounds(true);
         movingObstacle1.setBounce(1);
         movingObstacle1.setScale(0.125);
+
         movingObstacles2 = this.physics.add.group();
         let movingObstacle2 = movingObstacles2.create(500, 360, 'Obstacle');
         movingObstacle2.setVelocityX(200);
         movingObstacle2.setCollideWorldBounds(true);
         movingObstacle2.setBounce(1);
         movingObstacle2.setScale(0.125);
+
         movingObstacles3 = this.physics.add.group();
         let movingObstacle3 = movingObstacles3.create(300, 520, 'Obstacle');
         movingObstacle3.setVelocityX(200);
         movingObstacle3.setCollideWorldBounds(true);
         movingObstacle3.setBounce(1);
         movingObstacle3.setScale(0.125);
+
         movingObstacles4 = this.physics.add.group();
         let movingObstacle4 = movingObstacles4.create(100, 650, 'Obstacle');
         movingObstacle4.setVelocityX(200);
@@ -118,17 +123,14 @@ export default class GameSceneEasy extends Phaser.Scene {
 
         // プレイヤーの移動を処理
         if (cursors.left.isDown) {
+            player.setVelocityX(-200);
+        } else if (cursors.right.isDown) {
             player.setVelocityX(200);
         }
         if (cursors.up.isDown) {
-            player.setVelocityY(200);
-        }
-        if (cursors.left.isDown) {
-            player.setVelocityX(-200);
-        }
-
-        if (cursors.up.isDown) {
             player.setVelocityY(-200);
+        } else if (cursors.down.isDown) {
+            player.setVelocityY(200);
         }
     }
 
@@ -142,9 +144,9 @@ export default class GameSceneEasy extends Phaser.Scene {
             }
         }
 
-        // スタックと開始位置を初期化
+        // 迷路生成のためのスタックと初期セルを設定
         const stack = [];
-        const currentCell = { x: 0, y: 0 };
+        let currentCell = { x: 0, y: 0 };
         maze[currentCell.y][currentCell.x].visited = true;
         stack.push(currentCell);
 
@@ -217,7 +219,6 @@ export default class GameSceneEasy extends Phaser.Scene {
     handleRestart() {
         if (gameOver) {
             collectedCoins = 0;
-            controlsInverted = false;
             player.clearTint();
             gameOver = false;
             this.scene.restart();
