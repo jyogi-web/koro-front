@@ -124,12 +124,12 @@ export default class GameScene extends Phaser.Scene {
         this.physics.add.collider(player, walls);
         this.physics.add.overlap(player, coins, this.collectItem, null, this);
         this.physics.add.overlap(player, goal, this.reachGoal, null, this);
-        this.physics.add.collider(player, movingObstacles, this.hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacles2, this.hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacles3, this.hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacles4, this.hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacles5, this.hitEnemy, null, this);
-        this.physics.add.collider(player, movingObstacles6, this.hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacles, this.hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacles2, this.hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacles3, this.hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacles4, this.hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacles5, this.hitEnemy, null, this);
+        // this.physics.add.collider(player, movingObstacles6, this.hitEnemy, null, this);
 
         // プレイヤーの移動用のカーソルキーを設定
         cursors = this.input.keyboard.createCursorKeys();
@@ -153,7 +153,7 @@ export default class GameScene extends Phaser.Scene {
         });
 
         // スコアテキストの生成
-        scoreText = this.add.text(15, 30, 'score: 0', { fontSize: '15px', fill: '#FFF' })
+        scoreText = this.add.text(15, 30, 'score: 0', { fontSize: '15px', fill: '#FFF' }).setScrollFactor(0);
     }
     update() {
         if (gameOver) {
@@ -300,9 +300,16 @@ export default class GameScene extends Phaser.Scene {
             this.physics.pause();
             gameOver = true;
             player.setTint(0x00ff00);
-            const goalText = this.add.text(400, 300, 'You Win!', { fontSize: '64px', fill: '#00ff00' });
+
+            // カメラのズームをリセット
+            this.cameras.main.setZoom(1);
+            this.cameras.main.centerOn(this.cameras.main.worldView.x + this.cameras.main.worldView.width / 2,
+                this.cameras.main.worldView.y + this.cameras.main.worldView.height / 2);
+
+            const goalText = this.add.text(this.cameras.main.worldView.centerX, this.cameras.main.worldView.centerY - 50, 'You Win!', { fontSize: '64px', fill: '#00ff00' });
             goalText.setOrigin(0.5);
-            const nextLevelButton = this.add.text(400, 400, 'Next Level', { fontSize: '32px', fill: '#ffffff' })
+
+            const nextLevelButton = this.add.text(this.cameras.main.worldView.centerX, this.cameras.main.worldView.centerY + 50, 'Next Level', { fontSize: '32px', fill: '#ffffff' })
                 .setInteractive()
                 .on('pointerdown', () => {
                     collectedCoins = 0;
@@ -315,6 +322,7 @@ export default class GameScene extends Phaser.Scene {
             nextLevelButton.setOrigin(0.5);
         }
     }
+
 
     hitEnemy(player, enemy) {
         this.physics.pause(); // 物理システムを一時停止
