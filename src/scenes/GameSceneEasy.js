@@ -26,7 +26,7 @@ export default class GameSceneEasy extends Phaser.Scene {
         this.load.image('player', 'assets/R (4).png');
         this.load.image('goal', 'assets/goal.png');
         this.load.image('coin', 'assets/R (4).png');
-        this.load.image('Obstacle', 'assets/download_image_1716035805113.png');
+        this.load.image('Obstacle', 'assets/enemy.png');
     }
 
     create() {
@@ -71,28 +71,36 @@ export default class GameSceneEasy extends Phaser.Scene {
         movingObstacle1.setVelocityX(200);
         movingObstacle1.setCollideWorldBounds(true);
         movingObstacle1.setBounce(1);
-        movingObstacle1.setScale(0.125);
+        movingObstacle1.setScale(0.05);
+        movingObstacle1.setOrigin(0.5, 0.5);
+        movingObstacle1.body.setCircle(movingObstacle1.width / 2.5);
 
         movingObstacles2 = this.physics.add.group();
         let movingObstacle2 = movingObstacles2.create(500, 360, 'Obstacle');
         movingObstacle2.setVelocityX(200);
         movingObstacle2.setCollideWorldBounds(true);
         movingObstacle2.setBounce(1);
-        movingObstacle2.setScale(0.125);
+        movingObstacle2.setScale(0.05);
+        movingObstacle2.setOrigin(0.5, 0.5);
+        movingObstacle2.body.setCircle(movingObstacle2.width / 2);
 
         movingObstacles3 = this.physics.add.group();
         let movingObstacle3 = movingObstacles3.create(300, 520, 'Obstacle');
         movingObstacle3.setVelocityX(200);
         movingObstacle3.setCollideWorldBounds(true);
         movingObstacle3.setBounce(1);
-        movingObstacle3.setScale(0.125);
+        movingObstacle3.setScale(0.05);
+        movingObstacle3.setOrigin(0.5, 0.5);
+        movingObstacle3.body.setCircle(movingObstacle3.width / 2);
 
         movingObstacles4 = this.physics.add.group();
         let movingObstacle4 = movingObstacles4.create(100, 650, 'Obstacle');
         movingObstacle4.setVelocityX(200);
         movingObstacle4.setCollideWorldBounds(true);
         movingObstacle4.setBounce(1);
-        movingObstacle4.setScale(0.125);
+        movingObstacle4.setScale(0.05);
+        movingObstacle4.setOrigin(0.5, 0.5);
+        movingObstacle4.body.setCircle(movingObstacle4.width / 2);
 
         // 衝突と重なりを設定
         this.physics.add.collider(player, walls);

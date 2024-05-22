@@ -33,7 +33,7 @@ export default class GameScene extends Phaser.Scene {
         this.load.image('player', 'assets/R (4).png');
         this.load.image('goal', 'assets/goal.png');
         this.load.image('coin', 'assets/R (4).png');
-        this.load.image('Obstacle', 'assets/download_image_1716035805113.png');
+        this.load.image('Obstacle', 'assets/enemy.png');
     }
 
     create() {
@@ -82,7 +82,9 @@ export default class GameScene extends Phaser.Scene {
         movingObstacle1.setVelocityX(200);
         movingObstacle1.setCollideWorldBounds(true);
         movingObstacle1.setBounce(1);
-        movingObstacle1.setScale(0.125);
+        movingObstacle1.setScale(0.025);
+        movingObstacle1.setOrigin(0.25, 0.25);
+        movingObstacle1.body.setCircle(movingObstacle1.width / 2.5);
 
         // 2
         movingObstacles2 = this.physics.add.group();
@@ -90,46 +92,56 @@ export default class GameScene extends Phaser.Scene {
         movingObstacle2.setVelocityX(200);
         movingObstacle2.setCollideWorldBounds(true);
         movingObstacle2.setBounce(1);
-        movingObstacle2.setScale(0.125);
+        movingObstacle2.setScale(0.025);
+        movingObstacle2.setOrigin(0.5, 0.5);
+        movingObstacle2.body.setCircle(movingObstacle2.width / 2.5);
         // 3
         movingObstacles3 = this.physics.add.group();
         let movingObstacle3 = movingObstacles3.create(600, 330, 'Obstacle');
         movingObstacle3.setVelocityX(200);
         movingObstacle3.setCollideWorldBounds(true);
         movingObstacle3.setBounce(1);
-        movingObstacle3.setScale(0.125);
+        movingObstacle3.setScale(0.025);
+        movingObstacle3.setOrigin(0.5, 0.5);
+        movingObstacle3.body.setCircle(movingObstacle3.width / 2.5);
         // 4
         movingObstacles4 = this.physics.add.group();
         let movingObstacle4 = movingObstacles4.create(500, 440, 'Obstacle');
         movingObstacle4.setVelocityX(200);
         movingObstacle4.setCollideWorldBounds(true);
         movingObstacle4.setBounce(1);
-        movingObstacle4.setScale(0.125);
+        movingObstacle4.setScale(0.025);
+        movingObstacle4.setOrigin(0.5, 0.5);
+        movingObstacle4.body.setCircle(movingObstacle4.width / 2.5);
         // 5
         movingObstacles5 = this.physics.add.group();
         let movingObstacle5 = movingObstacles5.create(400, 550, 'Obstacle');
         movingObstacle5.setVelocityX(200);
         movingObstacle5.setCollideWorldBounds(true);
         movingObstacle5.setBounce(1);
-        movingObstacle5.setScale(0.125);
+        movingObstacle5.setScale(0.025);
+        movingObstacle5.setOrigin(0.5, 0.5);
+        movingObstacle5.body.setCircle(movingObstacle5.width / 2.5);
         // 6
         movingObstacles6 = this.physics.add.group();
         let movingObstacle6 = movingObstacles6.create(300, 660, 'Obstacle');
         movingObstacle6.setVelocityX(200);
         movingObstacle6.setCollideWorldBounds(true);
         movingObstacle6.setBounce(1);
-        movingObstacle6.setScale(0.125);
+        movingObstacle6.setScale(0.025);
+        movingObstacle6.setOrigin(0.5, 0.5);
+        movingObstacle6.body.setCircle(movingObstacle6.width / 2.5);
 
         // 衝突と重なりを設定
         this.physics.add.collider(player, walls);
         this.physics.add.overlap(player, coins, this.collectItem, null, this);
         this.physics.add.overlap(player, goal, this.reachGoal, null, this);
-        // this.physics.add.collider(player, movingObstacles, this.hitEnemy, null, this);
-        // this.physics.add.collider(player, movingObstacles2, this.hitEnemy, null, this);
-        // this.physics.add.collider(player, movingObstacles3, this.hitEnemy, null, this);
-        // this.physics.add.collider(player, movingObstacles4, this.hitEnemy, null, this);
-        // this.physics.add.collider(player, movingObstacles5, this.hitEnemy, null, this);
-        // this.physics.add.collider(player, movingObstacles6, this.hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacles, this.hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacles2, this.hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacles3, this.hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacles4, this.hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacles5, this.hitEnemy, null, this);
+        this.physics.add.collider(player, movingObstacles6, this.hitEnemy, null, this);
 
         // プレイヤーの移動用のカーソルキーを設定
         cursors = this.input.keyboard.createCursorKeys();
