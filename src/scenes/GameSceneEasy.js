@@ -121,6 +121,15 @@ export default class GameSceneEasy extends Phaser.Scene {
             left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A),
             right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D)
         };
+        this.input.gamepad.on('connected', (pad) => {
+            console.log('Gamepad connected:', pad.id);
+            this.pad = pad;
+        });
+
+        this.input.gamepad.on('disconnected', (pad) => {
+            console.log('Gamepad disconnected:', pad.id);
+            this.pad = null;
+        });
     }
 
     update() {
@@ -130,16 +139,33 @@ export default class GameSceneEasy extends Phaser.Scene {
         // プレイヤーの速度をリセット
         player.setVelocity(0);
 
-        // プレイヤーの移動を処理
-        if (cursors.left.isDown || this.wasd.left.isDown) {
-            player.setVelocityX(-200);
-        } else if (cursors.right.isDown || this.wasd.right.isDown) {
-            player.setVelocityX(200);
-        }
-        if (cursors.up.isDown || this.wasd.up.isDown) {
-            player.setVelocityY(-200);
-        } else if (cursors.down.isDown || this.wasd.down.isDown) {
-            player.setVelocityY(200);
+        // コントローラーが接続されている場合はコントローラー入力を優先
+        if (this.pad) {
+            const xAxis = this.pad.axes[0].getValue();
+            const yAxis = this.pad.axes[1].getValue();
+
+            if (xAxis < -0.5) {
+                player.setVelocityX(-200);
+            } else if (xAxis > 0.5) {
+                player.setVelocityX(200);
+            }
+            if (yAxis < -0.5) {
+                player.setVelocityY(-200);
+            } else if (yAxis > 0.5) {
+                player.setVelocityY(200);
+            }
+        } else {
+            // コントローラーが接続されていない場合はキーボード入力
+            if (cursors.left.isDown || this.wasd.left.isDown) {
+                player.setVelocityX(-200);
+            } else if (cursors.right.isDown || this.wasd.right.isDown) {
+                player.setVelocityX(200);
+            }
+            if (cursors.up.isDown || this.wasd.up.isDown) {
+                player.setVelocityY(-200);
+            } else if (cursors.down.isDown || this.wasd.down.isDown) {
+                player.setVelocityY(200);
+            }
         }
     }
 
