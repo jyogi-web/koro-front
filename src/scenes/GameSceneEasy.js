@@ -121,15 +121,21 @@ export default class GameSceneEasy extends Phaser.Scene {
             left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A),
             right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D)
         };
+        // ゲームパッド接続のリスナー
         this.input.gamepad.on('connected', (pad) => {
-            console.log('Gamepad connected:', pad.id);
-            this.pad = pad;
+            if (!this.pad) {
+                console.log('Gamepad connected:', pad.id);
+                this.pad = pad;
+            }
         });
 
         this.input.gamepad.on('disconnected', (pad) => {
-            console.log('Gamepad disconnected:', pad.id);
-            this.pad = null;
+            if (this.pad && this.pad.id === pad.id) {
+                console.log('Gamepad disconnected:', pad.id);
+                this.pad = null;
+            }
         });
+
     }
 
     update() {
@@ -277,7 +283,6 @@ function hitEnemy(player, enemy) {
         });
     restartButton.setOrigin(0.5);
 }
-
 // コインを収集する関数
 function collectItem(player, collectible) {
     // コインを無効化して非表示にする
@@ -291,10 +296,8 @@ function collectItem(player, collectible) {
         });
     }
 }
-
 // ゴールに到達したときの処理を行う関数
 function reachGoal(player, goal) {
-    // 全てのコインを収集しているか確認
     if (collectedCoins === totalCoins) {
         this.physics.pause();
         gameOver = true;
