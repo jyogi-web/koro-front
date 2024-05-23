@@ -163,7 +163,20 @@ export default class GameScene extends Phaser.Scene {
             callback: this.switchToPlayerView,
             callbackScope: this
         });
+        // ゲームパッド接続のリスナー
+        this.input.gamepad.on('connected', (pad) => {
+            if (!this.pad) {
+                console.log('Gamepad connected:', pad.id);
+                this.pad = pad;
+            }
+        });
 
+        this.input.gamepad.on('disconnected', (pad) => {
+            if (this.pad && this.pad.id === pad.id) {
+                console.log('Gamepad disconnected:', pad.id);
+                this.pad = null;
+            }
+        });
         // スコアテキストの生成
         scoreText = this.add.text(15, 30, 'score: 0', { fontSize: '15px', fill: '#FFF' }).setScrollFactor(0);
     }
@@ -175,30 +188,56 @@ export default class GameScene extends Phaser.Scene {
         // プレイヤーの速度をリセット
         player.setVelocity(0);
 
-        // プレイヤーの移動を処理
-        if (controlsInverted) {
-            if (cursors.left.isDown || this.wasd.left.isDown) {
-                player.setVelocityX(200);
-            } else if (cursors.right.isDown || this.wasd.right.isDown) {
-                player.setVelocityX(-200);
-            }
+        if (this.pad) {
+            const xAxis = this.pad.axes[0].getValue();
+            const yAxis = this.pad.axes[1].getValue();
 
-            if (cursors.up.isDown || this.wasd.up.isDown) {
-                player.setVelocityY(200);
-            } else if (cursors.down.isDown || this.wasd.down.isDown) {
-                player.setVelocityY(-200);
+            if (controlsInverted) {
+                if (xAxis < -0.5) {
+                    player.setVelocityX(200); // 反転
+                } else if (xAxis > 0.5) {
+                    player.setVelocityX(-200); // 反転
+                }
+                if (yAxis < -0.5) {
+                    player.setVelocityY(200); // 反転
+                } else if (yAxis > 0.5) {
+                    player.setVelocityY(-200); // 反転
+                }
+            } else {
+                if (xAxis < -0.5) {
+                    player.setVelocityX(-200);
+                } else if (xAxis > 0.5) {
+                    player.setVelocityX(200);
+                }
+                if (yAxis < -0.5) {
+                    player.setVelocityY(-200);
+                } else if (yAxis > 0.5) {
+                    player.setVelocityY(200);
+                }
             }
         } else {
-            if (cursors.left.isDown || this.wasd.left.isDown) {
-                player.setVelocityX(-200);
-            } else if (cursors.right.isDown || this.wasd.right.isDown) {
-                player.setVelocityX(200);
-            }
-
-            if (cursors.up.isDown || this.wasd.up.isDown) {
-                player.setVelocityY(-200);
-            } else if (cursors.down.isDown || this.wasd.down.isDown) {
-                player.setVelocityY(200);
+            if (controlsInverted) {
+                if (cursors.left.isDown || this.wasd.left.isDown) {
+                    player.setVelocityX(200); // 反転
+                } else if (cursors.right.isDown || this.wasd.right.isDown) {
+                    player.setVelocityX(-200); // 反転
+                }
+                if (cursors.up.isDown || this.wasd.up.isDown) {
+                    player.setVelocityY(200); // 反転
+                } else if (cursors.down.isDown || this.wasd.down.isDown) {
+                    player.setVelocityY(-200); // 反転
+                }
+            } else {
+                if (cursors.left.isDown || this.wasd.left.isDown) {
+                    player.setVelocityX(-200);
+                } else if (cursors.right.isDown || this.wasd.right.isDown) {
+                    player.setVelocityX(200);
+                }
+                if (cursors.up.isDown || this.wasd.up.isDown) {
+                    player.setVelocityY(-200);
+                } else if (cursors.down.isDown || this.wasd.down.isDown) {
+                    player.setVelocityY(200);
+                }
             }
         }
     }
