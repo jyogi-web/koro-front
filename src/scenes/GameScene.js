@@ -48,7 +48,7 @@ export default class GameScene extends Phaser.Scene {
         // プレイヤーを作成し、ワールドの境界と衝突させる
         player = this.physics.add.sprite(centerX - worldWidth / 2 + 40, centerY - worldHeight / 2 + 40, 'player');
         player.setCollideWorldBounds(true);
-        player.setScale(0.5);
+        player.setScale(0.035);
 
         // 静的な壁のグループを作成
         walls = this.physics.add.staticGroup();
