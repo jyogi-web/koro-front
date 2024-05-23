@@ -30,7 +30,7 @@ export default class GameScene extends Phaser.Scene {
 
     preload() {
         // 必要なアセットを読み込む
-        this.load.image('player', 'assets/R (4).png');
+        this.load.image('player', 'assets/Play.png');
         this.load.image('goal', 'assets/goal.png');
         this.load.image('coin', 'assets/R (4).png');
         this.load.image('Obstacle', 'assets/enemy.png');

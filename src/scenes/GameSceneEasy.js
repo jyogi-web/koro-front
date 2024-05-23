@@ -23,7 +23,7 @@ export default class GameSceneEasy extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('player', 'assets/R (4).png');
+        this.load.image('player', 'assets/Play.png');
         this.load.image('goal', 'assets/goal.png');
         this.load.image('coin', 'assets/R (4).png');
         this.load.image('Obstacle', 'assets/enemy.png');
@@ -36,6 +36,7 @@ export default class GameSceneEasy extends Phaser.Scene {
 
         // プレイヤーを作成し、ワールドの境界と衝突させる
         player = this.physics.add.sprite(40, 40, 'player');
+        player.setScale(0.1);
         player.setCollideWorldBounds(true);
 
         // カメラがプレイヤーを追従するように設定
